@@ -43,6 +43,6 @@ jobs:
         scope: resourcegroup
         region: uksouth
         # subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        resourceGroupName: sub-tag-testing
+        resourceGroupName: rg-dev-tag
         template: ./.github/workflows/bicep/create-database.bicep
         parameters: 'env_name=dev logical_area=private service_name=traveller'
