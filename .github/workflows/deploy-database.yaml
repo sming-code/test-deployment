@@ -27,6 +27,8 @@ jobs:
   deploy-database:
     environment: dev
     name: Deploy new resource group to azure
+    outputs:
+      sql-server-id: ${{ steps.rg-deployment.outputs.sql_server_id }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -46,3 +48,11 @@ jobs:
         resourceGroupName: rg-dev-tag
         template: ./.github/workflows/bicep/create-database.bicep
         parameters: 'env_name=dev'
+
+  display-outputs:
+    needs: deploy-database
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo '$SQL_SERVER_ID'
+    env:
+      SQL_SERVER_ID: ${{ needs.deploy-database.outputs.sql-server-id }}

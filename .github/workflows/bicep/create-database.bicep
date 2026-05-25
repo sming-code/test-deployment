@@ -8,4 +8,4 @@ resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   location: 'uksouth'
 }
 
-output sql_server_name string = database_server.id
+output sql_server_id string = database_server.id
