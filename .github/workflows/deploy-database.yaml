@@ -49,7 +49,10 @@ jobs:
         location: uksouth
         resource-group-name: rg-dev-tag
         template-file: ./.github/workflows/bicep/create-database.bicep
-        parameters: 'env_name=dev logical_area=private service_name=traveller'
+        parameters: |
+          env_name: dev
+          logical_area: private
+          service_name: traveller
 
     - run: |
         echo '${{ steps.rg-deployment.outputs.sql_server_id }}'
