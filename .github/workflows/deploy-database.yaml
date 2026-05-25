@@ -1,0 +1,48 @@
+name: Create resource group
+
+on:
+  workflow_call:
+    inputs:
+      logical-area:
+        description: The logical area of our ecosystem - i.e. public, private
+        required: true
+        type: string
+      service-name:
+        description: The name of the service
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-database:
+    environment: dev
+    name: Deploy new resource group to azure
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: deploy
+      id: rg-deployment
+      uses: azure/arm-deploy@v2
+      with:
+        scope: subscription
+        region: uksouth
+        # subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: sming
+        template: ./.github/workflows/bicep/create-database.bicep
+        parameters: 'env_name=dev logical_area=private service_name=traveller'
