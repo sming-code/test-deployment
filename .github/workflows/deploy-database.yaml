@@ -49,10 +49,6 @@ jobs:
         template: ./.github/workflows/bicep/create-database.bicep
         parameters: 'env_name=dev'
 
-  display-outputs:
-    needs: deploy-database
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo '$SQL_SERVER_ID'
-    env:
-      SQL_SERVER_ID: ${{ needs.deploy-database.outputs.sql-server-id }}
+    - run: echo '$SQL_SERVER_ID'
+      env:
+        SQL_SERVER_ID: ${{ steps.rg-deployment.outputs.sql-server-id }}
