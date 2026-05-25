@@ -40,14 +40,17 @@ jobs:
 
     - name: deploy
       id: rg-deployment
-      uses: azure/arm-deploy@v2
+      uses: azure/bicep-deploy@v2
       with:
-        scope: resourcegroup
-        region: uksouth
-        resourceGroupName: rg-dev-tag
-        template: ./.github/workflows/bicep/create-database.bicep
+        type: deployment
+        operation: create
+        name: deploy-database
+        scope: resourceGroup
+        location: uksouth
+        resource-group-name: rg-dev-tag
+        template-file: ./.github/workflows/bicep/create-database.bicep
         parameters: 'env_name=dev logical_area=private service_name=traveller'
 
-    - run: echo '$SQL_SERVER_ID'
-      env:
-        SQL_SERVER_ID: ${{ steps.rg-deployment.outputs.sql-server-id }}
+    - run: |
+        echo '${{ steps.rg-deployment.outputs.sql_server_id }}'
+        echo '${{ steps.rg-deployment.outputs.sql_database_id }}'
