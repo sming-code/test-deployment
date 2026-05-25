@@ -7,3 +7,5 @@ resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   name: server_name
   location: 'uksouth'
 }
+
+output sql_server_name string = database_server.id
