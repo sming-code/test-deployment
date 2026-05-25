@@ -79,5 +79,5 @@ resource geo_backup_policies 'Microsoft.Sql/servers/databases/geoBackupPolicies@
   }
 }
 
-output sql_server_id string = database_server.id
-output sql_database_id string = sql_database.id
+output sql_server_id string = database_server.properties.id
+output sql_database_id string = sql_database.properties.id

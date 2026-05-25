@@ -11,6 +11,8 @@ on:
         description: The name of the service
         required: true
         type: string
+    outputs:
+      
     secrets:
       AZURE_CLIENT_ID:
         required: true
