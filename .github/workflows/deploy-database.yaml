@@ -40,7 +40,7 @@ jobs:
       id: rg-deployment
       uses: azure/arm-deploy@v2
       with:
-        scope: resourceGroup
+        scope: resourcegroup
         region: uksouth
         # subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: sub-tag-testing
