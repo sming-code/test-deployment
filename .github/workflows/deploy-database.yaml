@@ -12,7 +12,10 @@ on:
         required: true
         type: string
     outputs:
-      
+      database-server-id:
+        value: ${{ jobs.deploy-database.outputs.sql-server-id }}
+      database-id:
+        value: ${{ jobs.deploy-database.outputs.sql-database-id }}
     secrets:
       AZURE_CLIENT_ID:
         required: true
@@ -31,6 +34,7 @@ jobs:
     name: Deploy new resource group to azure
     outputs:
       sql-server-id: ${{ steps.rg-deployment.outputs.sql_server_id }}
+      sql-database-id: ${{ steps.rg-deployment.outputs.sql_database_id }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6

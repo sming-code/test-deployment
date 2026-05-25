@@ -9,7 +9,7 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
 jobs:
   variables:
     name: Generate variables
