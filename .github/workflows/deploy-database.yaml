@@ -47,6 +47,7 @@ jobs:
         name: deploy-database
         scope: resourceGroup
         location: uksouth
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resource-group-name: rg-dev-tag
         template-file: ./.github/workflows/bicep/create-database.bicep
         parameters: |
