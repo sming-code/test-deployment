@@ -1,0 +1,37 @@
+name: Traveller service pipeline.
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+jobs:
+  variables:
+    name: Generate variables
+    runs-on: ubuntu-latest
+    steps:
+    - uses: sming-code/get-version-no-action@v1
+      id: get-version
+      with:
+        major: 1
+        minor: 0
+    - name: Display done
+      run: echo "Variables loaded..."
+    outputs:
+      container-app-name: traveller
+  create-database:
+    name: Create database for container app
+    needs: [ variables ]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    uses: ./.github/workflows/deploy-database.yaml
+    with:
+      container-app-name: ${{ needs.variables.outputs.container-app-name }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
