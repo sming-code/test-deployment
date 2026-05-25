@@ -30,7 +30,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     uses: ./.github/workflows/deploy-database.yaml
     with:
-      container-app-name: ${{ needs.variables.outputs.container-app-name }}
+      service-name: ${{ needs.variables.outputs.container-app-name }}
       logical-area: private
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
