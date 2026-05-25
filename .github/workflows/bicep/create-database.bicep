@@ -62,18 +62,6 @@ resource auditing_settings 'Microsoft.Sql/servers/databases/auditingSettings@202
   }
 }
 
-resource long_term_retention_policies 'Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'default'
-  properties: {
-    timeBasedImmutability: 'Disabled'
-    weeklyRetention: 'PT0S'
-    monthlyRetention: 'PT0S'
-    yearlyRetention: 'PT0S'
-    weekOfYear: 0
-  }
-}
-
 resource short_term_retention_policies 'Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies@2025-02-01-preview' = {
   parent: sql_database
   name: 'default'
@@ -83,63 +71,11 @@ resource short_term_retention_policies 'Microsoft.Sql/servers/databases/backupSh
   }
 }
 
-resource extended_auditing_settings 'Microsoft.Sql/servers/databases/extendedAuditingSettings@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'default'
-  properties: {
-    retentionDays: 0
-    isAzureMonitorTargetEnabled: false
-    state: 'Disabled'
-    storageAccountSubscriptionId: '00000000-0000-0000-0000-000000000000'
-  }
-}
-
 resource geo_backup_policies 'Microsoft.Sql/servers/databases/geoBackupPolicies@2025-02-01-preview' = {
   parent: sql_database
   name: 'Default'
   properties: {
     state: 'Disabled'
-  }
-}
-
-resource leader_digest_uploads 'Microsoft.Sql/servers/databases/ledgerDigestUploads@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'Current'
-  properties: {}
-}
-
-resource security_alert_policies 'Microsoft.Sql/servers/databases/securityAlertPolicies@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'Default'
-  properties: {
-    state: 'Disabled'
-    disabledAlerts: [
-      ''
-    ]
-    emailAddresses: [
-      ''
-    ]
-    emailAccountAdmins: false
-    retentionDays: 0
-  }
-}
-
-resource transparent_data_encryption 'Microsoft.Sql/servers/databases/transparentDataEncryption@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'Current'
-  properties: {
-    state: 'Enabled'
-  }
-}
-
-resource vulnerability_assessments 'Microsoft.Sql/servers/databases/vulnerabilityAssessments@2025-02-01-preview' = {
-  parent: sql_database
-  name: 'Default'
-  properties: {
-    recurringScans: {
-      isEnabled: false
-      emailSubscriptionAdmins: true
-    }
   }
 }
 
