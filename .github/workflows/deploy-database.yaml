@@ -12,10 +12,8 @@ on:
         required: true
         type: string
     outputs:
-      database-server-id:
-        value: ${{ jobs.deploy-database.outputs.sql-server-id }}
-      database-id:
-        value: ${{ jobs.deploy-database.outputs.sql-database-id }}
+      database-server-name:
+        value: ${{ jobs.deploy-database.outputs.sql-database-name }}
     secrets:
       AZURE_CLIENT_ID:
         required: true
@@ -33,8 +31,7 @@ jobs:
     environment: dev
     name: Deploy new resource group to azure
     outputs:
-      sql-server-id: ${{ steps.rg-deployment.outputs.sql_server_id }}
-      sql-database-id: ${{ steps.rg-deployment.outputs.sql_database_id }}
+      sql-database-name: ${{ steps.rg-deployment.outputs.sql_server_database_name }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -61,5 +58,4 @@ jobs:
           service_name: traveller
 
     - run: |
-        echo '${{ steps.rg-deployment.outputs.sql_server_id }}'
-        echo '${{ steps.rg-deployment.outputs.sql_database_id }}'
+        echo '${{ steps.rg-deployment.outputs.sql_server_database_name }}'
