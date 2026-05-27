@@ -8,8 +8,6 @@ resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   location: 'uksouth'
 }
 
-
-
 resource sql_database 'Microsoft.Sql/servers/databases@2025-02-01-preview' = {
   parent: database_server
   name: 'sql-${server_name}-${logical_area}-${service_name}'
@@ -79,4 +77,5 @@ resource geo_backup_policies 'Microsoft.Sql/servers/databases/geoBackupPolicies@
   }
 }
 
-output sql_server_database_name string = sql_database.name
+output sql_server_name string = database_server.name
+output sql_database_name string = sql_database.name
