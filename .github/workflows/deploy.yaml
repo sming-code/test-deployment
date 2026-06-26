@@ -24,6 +24,20 @@ jobs:
       run: echo "Variables loaded..."
     outputs:
       container-app-name: traveller
+  get-app-managed-identity:
+    name: Get existing or new app managed identity
+    needs: [ variables ]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    uses: ./.github/workflows/get-container-app-managed-identity.yaml
+    with:
+      environment: dev
+      service-name: ${{ needs.variables.outputs.container-app-name }}
+      logical-area: private
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
   create-database:
     name: Create database for container app
     needs: [ variables ]

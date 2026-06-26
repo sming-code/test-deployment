@@ -1,0 +1,55 @@
+name: Get container app managed identity
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: The environment being deployed to
+        required: true
+        type: string
+      logical-area:
+        description: The logical area of our ecosystem - i.e. public, private
+        required: true
+        type: string
+      service-name:
+        description: The name of the service
+        required: true
+        type: string
+    outputs:
+      managed-identity-id:
+        value: ${{ jobs.get-managed-identity.outputs.managed-identity-id }}
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  get-managed-identity:
+    environment: dev
+    name: Deploy new resource group to azure
+    outputs:
+      managed-identity-id: ${{ steps.rg-deployment.outputs.managed-identity-id }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: deploy
+      id: rg-deployment
+      run: |
+        existingCaManagedIdentity="$(az containerapp list -g rg-$Service_Name)"
+        echo "$existingCaManagedIdentity"
+        echo "managed-identity-id=$existingCaManagedIdentity" >> $GITHUB_OUTPUT
+      env:
+        Service_Name: ${{ inputs.service-name }}

@@ -63,3 +63,5 @@ jobs:
     - run: |
         echo '${{ steps.rg-deployment.outputs.sql_server_name }}'
         echo '${{ steps.rg-deployment.outputs.sql_database_name }}'
+
+    - add-user:
