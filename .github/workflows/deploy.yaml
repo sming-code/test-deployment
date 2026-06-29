@@ -31,14 +31,13 @@ jobs:
   ca-variables:
     name: Generate container app variables
     needs: [ variables ]
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/get-ca-variables.yaml
     with:
       environment: ${{ needs.variables.outputs.environment }}
       logical-area: ${{ needs.variables.outputs.logical-area }}
       service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
-get-app-managed-identity:
+  get-app-managed-identity:
     name: Get existing or new app managed identity
     needs: [ variables ]
     if: ${{ github.ref == 'refs/heads/main' }}
