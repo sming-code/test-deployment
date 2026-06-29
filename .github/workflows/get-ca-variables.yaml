@@ -36,7 +36,7 @@ jobs:
       run: |
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
         echo "$branchName"
-        branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo \"-${BASH_REMATCH[2]}\" || echo \"\")"
+        branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2]} || echo '')"
         echo "$branchSuffix"
         echo "BRANCH_SUFFIX=$branchSuffix" >> $GITHUB_OUTPUT
       env:
