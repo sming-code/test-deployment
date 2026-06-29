@@ -37,6 +37,16 @@ jobs:
       logical-area: ${{ needs.variables.outputs.logical-area }}
       service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
+
+  output-for-test:
+    name: Output for test
+    needs: [ ca-variables ]
+    runs-on: ubuntu-latest
+    steps:
+      - id: output-test
+        run: |
+          echo "${{ needs.ca-variables.outputs.resource-group-name }}"
+
   get-app-managed-identity:
     name: Get existing or new app managed identity
     needs: [ variables ]
