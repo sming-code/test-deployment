@@ -23,7 +23,22 @@ jobs:
     - name: Display done
       run: echo "Variables loaded..."
     outputs:
-      container-app-name: traveller
+      environment: dev
+      logical-area: private
+      service-name: traveller-svc
+      version-no: ${{ steps.get-version.outputs.version-no }}
+      last-release-tag: ${{ steps.get-version.outputs.last-release-tag }}
+  ca-variables:
+    name: Generate container app variables
+    needs: [ variables ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ./.github/workflows/get-ca-variables.yaml
+      with:
+        environment: ${{ needs.variables.outputs.environment }}
+        logical-area: ${{ needs.variables.outputs.logical-area }}
+        service-name: ${{ needs.variables.outputs.service-name }}
+        version-no: ${{ needs.variables.outputs.version-no }}
   get-app-managed-identity:
     name: Get existing or new app managed identity
     needs: [ variables ]
@@ -44,6 +59,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     uses: ./.github/workflows/deploy-database.yaml
     with:
+      env-name: dev
       service-name: ${{ needs.variables.outputs.container-app-name }}
       logical-area: private
     secrets:

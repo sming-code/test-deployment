@@ -1,8 +1,12 @@
-name: Create resource group
+name: Deploy database
 
 on:
   workflow_call:
     inputs:
+      env-name:
+        description: The environment being deployed to.
+        required: true
+        type: string
       logical-area:
         description: The logical area of our ecosystem - i.e. public, private
         required: true
@@ -31,7 +35,7 @@ permissions:
 jobs:
   deploy-database:
     environment: dev
-    name: Deploy new resource group to azure
+    name: Deploy new database to azure
     outputs:
       sql-server-name: ${{ steps.rg-deployment.outputs.sql_server_name }}
       sql-database-name: ${{ steps.rg-deployment.outputs.sql_database_name }}
@@ -56,9 +60,9 @@ jobs:
         resource-group-name: rg-dev-tag
         template-file: ./.github/workflows/bicep/create-database.bicep
         parameters: |
-          env_name: dev
-          logical_area: private
-          service_name: traveller
+          env_name: ${{ inputs.env-name }}
+          logical_area: ${{ inputs.logical-area }}
+          service_name: ${{ inputs.service-name }}
 
     - run: |
         echo '${{ steps.rg-deployment.outputs.sql_server_name }}'

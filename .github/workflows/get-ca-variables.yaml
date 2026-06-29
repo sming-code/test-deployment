@@ -1,0 +1,51 @@
+name: Get container app variables
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: The environment being deployed to
+        required: true
+        type: string
+      logical-area:
+        description: The logical area of our ecosystem - i.e. public, private
+        required: true
+        type: string
+      service-name:
+        description: The name of the service
+        required: true
+        type: string
+      version-no:
+        description: The version being built
+        required: true
+        type: string
+    outputs:
+      resource-group-name:
+        value: 'rg-ca-${{ inputs.service-name }}-${{ inputs.environment }}${{ jobs.build-ca-variables.outputs.branch-suffix }}'
+
+jobs:
+  build-ca-variables:
+    runs-on: ubuntu-latest
+    outputs:
+      branch-suffix: ${{ steps.calculate.outputs.BRANCH_SUFFIX }}
+    steps:
+    - uses: actions/checkout@v6
+    - uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: calculate-variables
+      id: calculate
+      run: |
+        branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+        echo "$branchName"
+        branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo '-${BASH_REMATCH[2]}' || echo '')"
+        echo "$branchSuffix"
+        echo "BRANCH_SUFFIX=$branchSuffix" >> $GITHUB_OUTPUT
+      env:
+        Environment: ${{ inputs.environment }}
+        Logical_Area: ${{ inputs.logical-area }}
+        Service_Name: ${{ inputs.service-name }}
+        Version_No: ${{ inputs.version-no }}

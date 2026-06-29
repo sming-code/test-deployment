@@ -48,6 +48,7 @@ jobs:
     - name: deploy
       id: rg-deployment
       run: |
+        existingResourceGroup="$(az group list --query "[?name=='rg-'].name")"
         existingCaManagedIdentity="$(az containerapp list -g rg-$Service_Name)"
         echo "$existingCaManagedIdentity"
         echo "managed-identity-id=$existingCaManagedIdentity" >> $GITHUB_OUTPUT
