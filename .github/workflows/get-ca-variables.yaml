@@ -22,6 +22,10 @@ on:
     outputs:
       resource-group-name:
         value: 'rg-ca-${{ inputs.service-name }}-${{ inputs.environment }}${{ jobs.build-ca-variables.outputs.branch-suffix }}'
+      container-app-name:
+        value: 'ca-${{ inputs.service-name }}-${{ inputs.environment }}${{ jobs.build-ca-variables.outputs.branch-suffix }}'
+      db-name:
+        value: 'sql-${{ inputs.service-name }}-${{ inputs.environment }}${{ jobs.build-ca-variables.outputs.branch-suffix }}'
 
 jobs:
   build-ca-variables:
