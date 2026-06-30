@@ -38,10 +38,16 @@ jobs:
     - name: calculate-variables
       id: calculate
       run: |
+        serviceEnvironment="$Service_Name-$Environment"
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
         echo "$branchName"
         branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2]} || echo '')"
         echo "$branchSuffix"
+        resourceGroupName="rg-ca-$serviceEnvironment$branchSuffix"
+        resourceGroupResponse="$(az group list --query \"[?name=='$resourceGroupName'].name\")"
+        echo "$resourceGroupResponse"
+        resourceGroupExists="$([[ $resourceGroupResponse == '[]' && echo false || echo true ]])"
+        echo "$resourceGroupExists"
         echo "BRANCH_SUFFIX=$branchSuffix" >> $GITHUB_OUTPUT
       env:
         Environment: ${{ inputs.environment }}
