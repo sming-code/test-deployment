@@ -63,7 +63,7 @@ jobs:
         echo "$branchSuffix"
         resourceGroupName="rg-ca-$serviceEnvironment$branchSuffix"
         echo "$resourceGroupName"
-        resourceGroupResponse="$(az group list --query [?name==\"$resourceGroupName\"].name)"
+        resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
         echo "$resourceGroupResponse"
         resourceGroupExists="$([[ $resourceGroupResponse == '[]' && echo false || echo true ]])"
         echo "$resourceGroupExists"
