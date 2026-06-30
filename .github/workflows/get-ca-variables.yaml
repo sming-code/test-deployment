@@ -65,8 +65,8 @@ jobs:
         echo "$resourceGroupName"
         resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
         echo "$resourceGroupResponse"
-        resourceGroupExists="$([[ $resourceGroupResponse == '[]' && echo false || echo true ]])"
-        echo "$resourceGroupExists"
+        # resourceGroupExists="$([[ $resourceGroupResponse == '[]' && echo false || echo true ]])"
+        # echo "$resourceGroupExists"
         echo "BRANCH_SUFFIX=$branchSuffix" >> $GITHUB_OUTPUT
       env:
         Environment: ${{ inputs.environment }}
