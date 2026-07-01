@@ -50,8 +50,11 @@ jobs:
       - id: output-test
         run: |
           echo "${{ needs.ca-variables.outputs.resource-group-name }}"
+          echo "${{ needs.ca-variables.outputs.resource-group-exists }}"
           echo "${{ needs.ca-variables.outputs.container-app-name }}"
-          echo "${{ needs.ca-variables.outputs.db-name }}"
+          echo "${{ needs.ca-variables.outputs.container-app-exists }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-name }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
 
   get-app-managed-identity:
     name: Get existing or new app managed identity
