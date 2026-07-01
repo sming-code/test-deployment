@@ -85,10 +85,10 @@ jobs:
           sqlDatabaseExists=0
           containerAppExists=0;
         else
-          sqlDatabaseResponse="$(az sql db list -s dev-tag -g $resourceGroupName --query '[?name==`'$sqlDatabaseName'].name')"
+          sqlDatabaseResponse="$(az sql db list -s dev-tag -g $resourceGroupName --query '[?name==`'$sqlDatabaseName'`].name')"
           echo "$sqlDatabaseResponse"
           sqlDatabaseExists="$([[ $sqlDatabaseResponse == '[]' ]] && echo 0 || echo 1)"
-          containerAppResponse="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'].name')"
+          containerAppResponse="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].name')"
           echo "$containerAppResponse"
           containerAppExists="$([[ $containerAppResponse == '[]' ]] && echo 0 || echo 1)";
         fi
