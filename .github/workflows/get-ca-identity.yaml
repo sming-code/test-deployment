@@ -68,7 +68,7 @@ jobs:
       run: |
         serviceEnvironment="$Service_Name-$Environment"
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-        branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
+        branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2]} || echo '')"
         containerAppName="ca-$serviceEnvironment$branchSuffix"
         resourceGroupName="rg-$containerAppName"
         sqlDatabaseName="sql-$containerAppName"
