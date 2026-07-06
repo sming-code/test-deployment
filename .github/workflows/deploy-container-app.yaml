@@ -1,0 +1,115 @@
+name: Get container app variables
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: The environment being deployed to
+        required: true
+        type: string
+      resource-group-name:
+        description: The name of the resource group to deploy associated resources to where possible.
+        required: true
+        type: string
+      resource-group-exists:
+        description: The name of the resource group to deploy associated resources to where possible.
+        required: true
+        type: boolean
+      container-app-name:
+        description: The resource name for the container app.
+        required: true
+        type: string
+      container-app-id:
+        description: The id of the existing container app - if it exists
+        required: true
+        type: string
+      container-app-exists:
+        description: Whether the container app currently exists
+        required: true
+        type: boolean
+      sql-database-name:
+        description: The resource name for the sql database.
+        required: true
+        type: string
+      sql-database-id:
+        description: The id of the existing sql database - if it exists
+        required: true
+        type: string
+      sql-database-exists:
+        description: Whether the sql database currently exists
+        required: true
+        type: boolean
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  create-resource-group-if-not-exists:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ensure-resource-group
+        run: |
+          if [[ $Resource_Group_Exists == 0 ]]; then
+            az group create $Resource_Group_Name
+          fi
+        env:
+          Resource_Group_Name: ${{ inputs.resource-group-name }}
+          Resource_Group_Exists: ${{ inputs.resource-group-exists }}
+
+            # build-ca-variables:
+              #   environment: dev
+                #   runs-on: ubuntu-latest
+                  #   outputs:
+                    #     resource-group-name: ${{ steps.calculate.outputs.RESOURCE_GROUP_NAME }}
+                      #     resource-group-exists: ${{ steps.calculate.outputs.RESOURCE_GROUP_EXISTS }}
+                        #     container-app-name: ${{ steps.calculate.outputs.CONTAINER_APP_NAME }}
+                          #     container-app-exists: ${{ steps.calculate.outputs.CONTAINER_APP_EXISTS }}
+                            #     sql-database-name: ${{ steps.calculate.outputs.SQL_DATABASE_NAME }}
+                              #     sql-database-exists: ${{ steps.calculate.outputs.SQL_DATABASE_EXISTS }}
+                                #   steps:
+                                  #   - uses: actions/checkout@v6
+                                    #   - uses: azure/login@v3
+                                      #     with:
+                                        #       client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                                          #       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                                            #       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+                                              #   - name: calculate-variables
+                                                #     id: calculate
+                                                  #     run: |
+                                                    #       serviceEnvironment="$Service_Name-$Environment"
+                                                      #       branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+                                                        #       branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2]} || echo '')"
+                                                          #       containerAppName="ca-$serviceEnvironment$branchSuffix"
+                                                            #       resourceGroupName="rg-$containerAppName"
+                                                              #       sqlDatabaseName="sql-$containerAppName"
+                                                                #       resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
+                                                                  #       resourceGroupExists="$([[ $resourceGroupResponse == '[]' ]] && echo 0 || echo 1)"
+                                                                    #       sqlDatabaseResponse="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].name')"
+                                                                      #       sqlDatabaseExists="$([[ $sqlDatabaseResponse == '[]' ]] && echo 0 || echo 1)"
+                                                                        #       if [[ $resourceGroupExists == 0 ]]; then
+                                                                          #         containerAppExists=0;
+                                                                            #       else
+                                                                              #         containerAppResponse="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].name')"
+                                                                                #         containerAppExists="$([[ $containerAppResponse == '[]' ]] && echo 0 || echo 1)";
+                                                                                  #       fi
+                                                                                    #       echo "RESOURCE_GROUP_NAME=$resourceGroupName" >> $GITHUB_OUTPUT
+                                                                                      #       echo "RESOURCE_GROUP_EXISTS=$resourceGroupExists" >> $GITHUB_OUTPUT
+                                                                                        #       echo "CONTAINER_APP_NAME=$containerAppName" >> $GITHUB_OUTPUT
+                                                                                          #       echo "CONTAINER_APP_EXISTS=$containerAppExists" >> $GITHUB_OUTPUT
+                                                                                            #       echo "SQL_DATABASE_NAME=$sqlDatabaseName" >> $GITHUB_OUTPUT
+                                                                                              #       echo "SQL_DATABASE_EXISTS=$sqlDatabaseExists" >> $GITHUB_OUTPUT
+                                                                                                #     env:
+                                                                                                  #       Environment: ${{ inputs.environment }}
+                                                                                                    #       Logical_Area: ${{ inputs.logical-area }}
+                                                                                                      #       Service_Name: ${{ inputs.service-name }}
+                                                                                                        #       Version_No: ${{ inputs.version-no }}
+                                                                                                        

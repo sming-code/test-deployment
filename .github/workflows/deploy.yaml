@@ -6,6 +6,12 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      deploy-to-dev:
+        description: 'Deploy branch container to dev environment for testing'
+        required: false
+        type: boolean
+        default: false
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,30 +64,25 @@ jobs:
           echo "${{ needs.ca-variables.outputs.sql-database-id }}"
           echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
 
-  get-app-managed-identity:
-    name: Get existing or new app managed identity
-    needs: [ variables ]
-    if: ${{ github.ref == 'refs/heads/main' }}
-    uses: ./.github/workflows/get-container-app-managed-identity.yaml
-    with:
-      environment: dev
-      service-name: ${{ needs.variables.outputs.container-app-name }}
-      logical-area: private
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  create-database:
-    name: Create database for container app
-    needs: [ variables ]
-    if: ${{ github.ref == 'refs/heads/main' }}
-    uses: ./.github/workflows/deploy-database.yaml
-    with:
-      env-name: dev
-      service-name: ${{ needs.variables.outputs.container-app-name }}
-      logical-area: private
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  deploy-dev:
+    name: Deploy container app and related resources to dev
+    needs: [ ca-variables ]
+    environment: dev
+    runs-on: ubuntu-latest
+    if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
+    steps:
+    - uses: ./.github/workflows/deploy-container-app.yaml
+      with:
+        environment: dev
+        resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
+        resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
+        container-app-name: ${{ needs.ca-variables.outputs.container-app-name }}
+        container-app-id: ${{ needs.ca-variables.outputs.container-app-id }}
+        container-app-exists: ${{ needs.ca-variables.outputs.container-app-exists }}
+        sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}
+        sql-database-id: ${{ needs.ca-variables.outputs.sql-database-id }}
+        sql-database-exists: ${{ needs.ca-variables.outputs.sql-database-exists }}
+      secrets:
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
