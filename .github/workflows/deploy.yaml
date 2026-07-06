@@ -71,7 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
     steps:
-    - uses: ./../.github/actions/deploy-container-app
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/deploy-container-app
       with:
         environment: dev
         resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
