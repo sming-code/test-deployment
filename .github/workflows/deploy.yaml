@@ -67,25 +67,20 @@ jobs:
   deploy-dev:
     name: Deploy container app and related resources to dev
     needs: [ ca-variables ]
-    environment: dev
-    runs-on: ubuntu-latest
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
-    steps:
-    - uses: actions/checkout@v6
-    - uses: azure/login@v3
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID_DEV }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - uses: ./.github/actions/deploy-container-app
-      with:
-        subscription: sub-tag-testing
-        environment: dev
-        resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
-        resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
-        container-app-name: ${{ needs.ca-variables.outputs.container-app-name }}
-        container-app-id: ${{ needs.ca-variables.outputs.container-app-id }}
-        container-app-exists: ${{ needs.ca-variables.outputs.container-app-exists }}
-        sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}
-        sql-database-id: ${{ needs.ca-variables.outputs.sql-database-id }}
-        sql-database-exists: ${{ needs.ca-variables.outputs.sql-database-exists }}
+    uses: ./.github/workflows/get-ca-variables.yaml
+    with:
+      subscription: sub-tag-testing
+      environment: dev
+      resource-group-name: ${{ inputs.resource-group-name }}
+      resource-group-exists: ${{ inputs.resource-group-exists }}
+      container-app-name: ${{ inputs.container-app-name }}
+      container-app-id: ${{ inputs.container-app-id }}
+      container-app-exists: ${{ inputs.container-app-exists }}
+      sql-database-name: ${{ inputs.sql-database-name }}
+      sql-database-id: ${{ inputs.sql-database-id }}
+      sql-database-exists: ${{ inputs.sql-database-exists }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_DEV }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
