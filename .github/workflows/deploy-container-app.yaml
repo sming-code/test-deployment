@@ -39,13 +39,18 @@ on:
         description: Whether the sql database currently exists
         required: true
         type: boolean
-    secrets:
-      AZURE_CLIENT_ID:
+      azure-client-id:
+        description: Client id to use for azure auth
         required: true
-      AZURE_TENANT_ID:
+        type: string
+      azure-tenant-id:
+        description: Tenant id to use for azure auth
         required: true
-      AZURE_SUBSCRIPTION_ID:
+        type: string
+      azure-subscription-id:
+        description: Subscription id to use for azure auth
         required: true
+        type: string
 
 permissions:
   id-token: write
