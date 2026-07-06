@@ -72,6 +72,11 @@ jobs:
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
     steps:
     - uses: actions/checkout@v6
+    - uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID_DEV }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - uses: ./.github/actions/deploy-container-app
       with:
         subscription: sub-tag-testing
@@ -84,6 +89,3 @@ jobs:
         sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}
         sql-database-id: ${{ needs.ca-variables.outputs.sql-database-id }}
         sql-database-exists: ${{ needs.ca-variables.outputs.sql-database-exists }}
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
