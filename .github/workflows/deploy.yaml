@@ -72,14 +72,14 @@ jobs:
     with:
       subscription: sub-tag-testing
       environment: dev
-      resource-group-name: ${{ inputs.resource-group-name }}
-      resource-group-exists: ${{ inputs.resource-group-exists }}
-      container-app-name: ${{ inputs.container-app-name }}
-      container-app-id: ${{ inputs.container-app-id }}
-      container-app-exists: ${{ inputs.container-app-exists }}
-      sql-database-name: ${{ inputs.sql-database-name }}
-      sql-database-id: ${{ inputs.sql-database-id }}
-      sql-database-exists: ${{ inputs.sql-database-exists }}
+      resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
+      resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
+      container-app-name: ${{ needs.ca-variables.outputs.container-app-name }}
+      container-app-id: ${{ needs.ca-variables.outputs.container-app-id }}
+      container-app-exists: ${{ needs.ca-variables.outputs.container-app-exists }}
+      sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}
+      sql-database-id: ${{ needs.ca-variables.outputs.sql-database-id }}
+      sql-database-exists: ${{ needs.ca-variables.outputs.sql-database-exists }}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_DEV }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
