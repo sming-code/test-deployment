@@ -1,4 +1,4 @@
-name: Traveller service pipeline.
+name: Test deployment pipeline.
 
 on:
   pull_request:
@@ -52,8 +52,10 @@ jobs:
           echo "${{ needs.ca-variables.outputs.resource-group-name }}"
           echo "${{ needs.ca-variables.outputs.resource-group-exists }}"
           echo "${{ needs.ca-variables.outputs.container-app-name }}"
+          echo "${{ needs.ca-variables.outputs.container-app-id }}"
           echo "${{ needs.ca-variables.outputs.container-app-exists }}"
           echo "${{ needs.ca-variables.outputs.sql-database-name }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-id }}"
           echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
 
   get-app-managed-identity:
