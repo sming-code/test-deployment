@@ -18,7 +18,7 @@ on:
       resource-group-exists:
         description: The name of the resource group to deploy associated resources to where possible.
         required: true
-        type: boolean
+        type: number
       container-app-name:
         description: The resource name for the container app.
         required: true
@@ -30,7 +30,7 @@ on:
       container-app-exists:
         description: Whether the container app currently exists
         required: true
-        type: boolean
+        type: number
       sql-database-name:
         description: The resource name for the sql database.
         required: true
@@ -42,7 +42,7 @@ on:
       sql-database-exists:
         description: Whether the sql database currently exists
         required: true
-        type: boolean
+        type: number
     secrets:
       AZURE_CLIENT_ID:
         required: true
