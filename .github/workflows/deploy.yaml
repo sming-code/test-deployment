@@ -68,7 +68,7 @@ jobs:
     name: Deploy container app and related resources to dev
     needs: [ ca-variables ]
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
-    uses: ./.github/workflows/get-ca-variables.yaml
+    uses: ./.github/workflows/deploy-container-app.yaml
     with:
       subscription: sub-tag-testing
       environment: dev
