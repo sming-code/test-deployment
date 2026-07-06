@@ -1,4 +1,4 @@
-name: Traveller service pipeline.
+name: Test deployment pipeline.
 
 on:
   pull_request:
@@ -37,6 +37,10 @@ jobs:
       logical-area: ${{ needs.variables.outputs.logical-area }}
       service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_DEV }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   output-for-test:
     name: Output for test
@@ -46,6 +50,13 @@ jobs:
       - id: output-test
         run: |
           echo "${{ needs.ca-variables.outputs.resource-group-name }}"
+          echo "${{ needs.ca-variables.outputs.resource-group-exists }}"
+          echo "${{ needs.ca-variables.outputs.container-app-name }}"
+          echo "${{ needs.ca-variables.outputs.container-app-id }}"
+          echo "${{ needs.ca-variables.outputs.container-app-exists }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-name }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-id }}"
+          echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
 
   get-app-managed-identity:
     name: Get existing or new app managed identity

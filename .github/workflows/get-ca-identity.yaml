@@ -52,10 +52,8 @@ jobs:
       resource-group-name: ${{ steps.calculate.outputs.RESOURCE_GROUP_NAME }}
       resource-group-exists: ${{ steps.calculate.outputs.RESOURCE_GROUP_EXISTS }}
       container-app-name: ${{ steps.calculate.outputs.CONTAINER_APP_NAME }}
-      container-app-id: ${{ steps.calculate.outputs.CONTAINER_APP_ID }}
       container-app-exists: ${{ steps.calculate.outputs.CONTAINER_APP_EXISTS }}
       sql-database-name: ${{ steps.calculate.outputs.SQL_DATABASE_NAME }}
-      sql-database-id: ${{ steps.calculate.outputs.SQL_DATABASE_ID }}
       sql-database-exists: ${{ steps.calculate.outputs.SQL_DATABASE_EXISTS }}
     steps:
     - uses: actions/checkout@v6
@@ -70,33 +68,25 @@ jobs:
       run: |
         serviceEnvironment="$Service_Name-$Environment"
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-        branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
+        branchSuffix="$([[ $branchName =~ ^(feature|bug)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2]} || echo '')"
         containerAppName="ca-$serviceEnvironment$branchSuffix"
-        echo "$containerAppName"
         resourceGroupName="rg-$containerAppName"
-        echo "$resourceGroupName"
         sqlDatabaseName="sql-$containerAppName"
-        echo "$sqlDatabaseName"
         resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
-        echo "$resourceGroupResponse"
         resourceGroupExists="$([[ $resourceGroupResponse == '[]' ]] && echo 0 || echo 1)"
-        echo "$resourceGroupExists"
-        sqlDatabaseId="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].id | [0]')"
-        sqlDatabaseExists="$([[ $sqlDatabaseId == '' ]] && echo 0 || echo 1)"
+        sqlDatabaseResponse="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].name')"
+        sqlDatabaseExists="$([[ $sqlDatabaseResponse == '[]' ]] && echo 0 || echo 1)"
         if [[ $resourceGroupExists == 0 ]]; then
-          containerAppId=""
           containerAppExists=0;
         else
-          containerAppId="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].id | [0]')"
-          containerAppExists="$([[ $containerAppId == '' ]] && echo 0 || echo 1)";
+          containerAppResponse="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].name')"
+          containerAppExists="$([[ $containerAppResponse == '[]' ]] && echo 0 || echo 1)";
         fi
         echo "RESOURCE_GROUP_NAME=$resourceGroupName" >> $GITHUB_OUTPUT
         echo "RESOURCE_GROUP_EXISTS=$resourceGroupExists" >> $GITHUB_OUTPUT
         echo "CONTAINER_APP_NAME=$containerAppName" >> $GITHUB_OUTPUT
-        echo "CONTAINER_APP_ID=$containerAppId" >> $GITHUB_OUTPUT
         echo "CONTAINER_APP_EXISTS=$containerAppExists" >> $GITHUB_OUTPUT
         echo "SQL_DATABASE_NAME=$sqlDatabaseName" >> $GITHUB_OUTPUT
-        echo "SQL_DATABASE_ID=$sqlDatabaseId" >> $GITHUB_OUTPUT
         echo "SQL_DATABASE_EXISTS=$sqlDatabaseExists" >> $GITHUB_OUTPUT
       env:
         Environment: ${{ inputs.environment }}
