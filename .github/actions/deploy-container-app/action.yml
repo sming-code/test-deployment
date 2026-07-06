@@ -1,6 +1,9 @@
 name: Deploy container app
 description: 'Deploy a container app and associated resources to azure'
 inputs:
+  subscription:
+    description: The subscription to add the resource group to
+    required: true
   environment:
     description: The environment being deployed to
     required: true
@@ -44,7 +47,7 @@ runs:
     shell: bash
     run: |
       if [[ $Resource_Group_Exists == 0 ]]; then
-        az group create $Resource_Group_Name
+        az group create $Resource_Group_Name -l uksouth --subscription ${{ inputs.subscription }}
       fi
     env:
       Resource_Group_Name: ${{ inputs.resource-group-name }}

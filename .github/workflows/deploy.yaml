@@ -74,6 +74,7 @@ jobs:
     - uses: actions/checkout@v6
     - uses: ./.github/actions/deploy-container-app
       with:
+        subscription: sub-tag-testing
         environment: dev
         resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
         resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
