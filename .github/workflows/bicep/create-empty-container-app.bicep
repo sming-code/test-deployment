@@ -37,7 +37,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     template: {
       containers: [
         {
-          image: 'ghcr.io/sming-code/empty-service-worker:1.0.0'
+          image: 'sming-code/empty-service-worker:1.0.0'
           name: container_app_name
           command: []
           args: []
