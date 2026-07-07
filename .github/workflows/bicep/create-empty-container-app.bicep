@@ -2,8 +2,6 @@ param container_app_environment_name string
 param container_app_name string
 
 @secure()
-param ghcr_user_name string
-@secure()
 param ghcr_password string
 
 
@@ -27,7 +25,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
       registries: [
         {
           server: 'ghcr.io'
-          username: ghcr_user_name
+          username: 'gh_user'
           passwordSecretRef: ghcr_password
         }
       ]
