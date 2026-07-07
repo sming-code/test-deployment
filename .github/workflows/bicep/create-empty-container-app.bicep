@@ -19,7 +19,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     configuration: {
       secrets: [
         {
-          name: 'ghcr__password'
+          name: 'ghcr-password'
           value: ghcr_password
         }
       ]
@@ -28,7 +28,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
         {
           server: 'ghcr.io'
           username: 'Matt Astill'
-          passwordSecretRef: 'ghcr__password'
+          passwordSecretRef: 'ghcr-password'
         }
       ]
       maxInactiveRevisions: 100
