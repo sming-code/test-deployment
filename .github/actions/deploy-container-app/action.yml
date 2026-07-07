@@ -66,4 +66,4 @@ runs:
       parameters: |
         container_app_environment_id: ${{ steps.container-app-environment-id.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
-        ghcr_password: ${{ inputs.gh-token }}
+        ghcr_password: ${{ github.token }}
