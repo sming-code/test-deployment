@@ -24,18 +24,14 @@ on:
         value: ${{ jobs.build-ca-variables.outputs.resource-group-name }}
       resource-group-exists:
         value: ${{ jobs.build-ca-variables.outputs.resource-group-exists }}
-      container-app-environment-id:
-        value: ${{ jobs.build-ca-variables.outputs.container-app-environment-id }}
+      container-app-environment-name:
+        value: ${{ jobs.build-ca-variables.outputs.container-app-environment-name }}
       container-app-name:
         value: ${{ jobs.build-ca-variables.outputs.container-app-name }}
-      container-app-id:
-        value: ${{ jobs.build-ca-variables.outputs.container-app-id }}
       container-app-exists:
         value: ${{ jobs.build-ca-variables.outputs.container-app-exists }}
       sql-database-name:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-name }}
-      sql-database-id:
-        value: ${{ jobs.build-ca-variables.outputs.sql-database-id }}
       sql-database-exists:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-exists }}
     secrets:
