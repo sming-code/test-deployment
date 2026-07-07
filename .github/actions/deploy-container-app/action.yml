@@ -64,6 +64,6 @@ runs:
       resource-group-name: ${{ inputs.resource-group-name }}
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |
-        container_app_environment_name: ${{ steps.container-app-environment-id.outputs.cae-id }}
+        container_app_environment_id: ${{ steps.container-app-environment-id.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_password: ${{ inputs.gh-token }}
