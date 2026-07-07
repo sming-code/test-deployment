@@ -24,12 +24,18 @@ on:
         value: ${{ jobs.build-ca-variables.outputs.resource-group-name }}
       resource-group-exists:
         value: ${{ jobs.build-ca-variables.outputs.resource-group-exists }}
+      container-app-environment-id:
+        value: ${{ jobs.build-ca-variables.outputs.container-app-environment-id }}
       container-app-name:
         value: ${{ jobs.build-ca-variables.outputs.container-app-name }}
+      container-app-id:
+        value: ${{ jobs.build-ca-variables.outputs.container-app-id }}
       container-app-exists:
         value: ${{ jobs.build-ca-variables.outputs.container-app-exists }}
       sql-database-name:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-name }}
+      sql-database-id:
+        value: ${{ jobs.build-ca-variables.outputs.sql-database-id }}
       sql-database-exists:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-exists }}
     secrets:
@@ -51,6 +57,7 @@ jobs:
     outputs:
       resource-group-name: ${{ steps.calculate.outputs.RESOURCE_GROUP_NAME }}
       resource-group-exists: ${{ steps.calculate.outputs.RESOURCE_GROUP_EXISTS }}
+      container-app-environment-id: ${{ steps.calculate.outputs.CONTAINER_APP_ENVIRONMENT_ID }}
       container-app-name: ${{ steps.calculate.outputs.CONTAINER_APP_NAME }}
       container-app-id: ${{ steps.calculate.outputs.CONTAINER_APP_ID }}
       container-app-exists: ${{ steps.calculate.outputs.CONTAINER_APP_EXISTS }}
@@ -71,16 +78,13 @@ jobs:
         serviceEnvironment="$Service_Name-$Environment"
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
         branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
+        containerAppEnvironmentName="caenv-$Environment-tag-$Logical_Area"
+        containerAppEnvironmentId="$(az containerapp env list -g $resourceGroupName --query '[?name==`'$containerAppEnvironmentName'`].id | [0]')"
         containerAppName="ca-$serviceEnvironment$branchSuffix"
-        echo "$containerAppName"
         resourceGroupName="rg-$containerAppName"
-        echo "$resourceGroupName"
         sqlDatabaseName="sql-$containerAppName"
-        echo "$sqlDatabaseName"
         resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
-        echo "$resourceGroupResponse"
         resourceGroupExists="$([[ $resourceGroupResponse == '[]' ]] && echo 0 || echo 1)"
-        echo "$resourceGroupExists"
         sqlDatabaseId="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].id | [0]')"
         sqlDatabaseExists="$([[ $sqlDatabaseId == '' ]] && echo 0 || echo 1)"
         if [[ $resourceGroupExists == 0 ]]; then
@@ -92,6 +96,7 @@ jobs:
         fi
         echo "RESOURCE_GROUP_NAME=$resourceGroupName" >> $GITHUB_OUTPUT
         echo "RESOURCE_GROUP_EXISTS=$resourceGroupExists" >> $GITHUB_OUTPUT
+        echo "CONTAINER_APP_ENVIRONMENT_ID=$containerAppEnvironmentId" >> $GITHUB_OUTPUT
         echo "CONTAINER_APP_NAME=$containerAppName" >> $GITHUB_OUTPUT
         echo "CONTAINER_APP_ID=$containerAppId" >> $GITHUB_OUTPUT
         echo "CONTAINER_APP_EXISTS=$containerAppExists" >> $GITHUB_OUTPUT

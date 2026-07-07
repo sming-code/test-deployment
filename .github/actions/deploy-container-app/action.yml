@@ -35,8 +35,13 @@ runs:
   using: "composite"
   steps:
   - name: ensure-resource-group
+    if: ${{ inputs.resource-group-exists == 0 }}
     shell: bash
     run: |
-      if [[ ${{ inputs.resource-group-exists }} == 0 ]]; then
-        az group create -n ${{ inputs.resource-group-name }} -l uksouth --subscription ${{ inputs.subscription }}
-      fi
+      az group create -n ${{ inputs.resource-group-name }} -l uksouth --subscription ${{ inputs.subscription }}
+
+  # - name: ensure-container-app-exists
+  #   if: ${{ inputs.container-app-exists == 0 }}
+  #   shell: bash
+  #   run: |
+  #     az containerapp
