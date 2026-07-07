@@ -1,3 +1,4 @@
+param revision_suffix string
 param container_app_name string
 
 @secure()
@@ -8,14 +9,11 @@ param ghcr_password string
 resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
   location: 'UK South'
-  kind: 'containerapps'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: container_app_environment_id
     environmentId: container_app_environment_id
-    workloadProfileName: 'Consumption'
     configuration: {
       secrets: [
         {
@@ -27,7 +25,6 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
       registries: [
         {
           server: 'ghcr.io'
-          username: ''
           passwordSecretRef: 'ghcr-password'
         }
       ]
@@ -47,6 +44,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
           }
         }
       ]
+      revisionSuffix: revision_suffix
       scale: {
         minReplicas: 1
         maxReplicas: 1

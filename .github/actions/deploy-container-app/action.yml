@@ -10,6 +10,9 @@ inputs:
   environment:
     description: The environment being deployed to
     required: true
+  revision-suffix:
+    description: The revision suffix for the container app
+    required: true
   resource-group-name:
     description: The name of the resource group to deploy associated resources to where possible.
     required: true
@@ -67,3 +70,4 @@ runs:
         container_app_environment_id: ${{ steps.container-app-environment-id.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_password: ${{ github.token }}
+        revision_suffix: ${{ inputs.revision-suffix }}
