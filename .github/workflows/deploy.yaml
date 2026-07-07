@@ -57,6 +57,7 @@ jobs:
         run: |
           echo "${{ needs.ca-variables.outputs.resource-group-name }}"
           echo "${{ needs.ca-variables.outputs.resource-group-exists }}"
+          echo "${{ needs.ca-variables.outputs.container-app-environment-name }}"
           echo "${{ needs.ca-variables.outputs.container-app-name }}"
           echo "${{ needs.ca-variables.outputs.container-app-exists }}"
           echo "${{ needs.ca-variables.outputs.sql-database-name }}"
@@ -72,6 +73,7 @@ jobs:
       environment: dev
       resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
       resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
+      container-app-environment-name: ${{ needs.ca-variables.outputs.container-app-environment-name }}
       container-app-name: ${{ needs.ca-variables.outputs.container-app-name }}
       container-app-exists: ${{ needs.ca-variables.outputs.container-app-exists }}
       sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}

@@ -19,6 +19,10 @@ on:
         description: The name of the resource group to deploy associated resources to where possible.
         required: true
         type: string
+      container-app-environment-name:
+        description: The resource name for the container app.
+        required: true
+        type: string
       container-app-name:
         description: The resource name for the container app.
         required: true
@@ -67,6 +71,7 @@ jobs:
         environment: dev
         resource-group-name: ${{ inputs.resource-group-name }}
         resource-group-exists: ${{ inputs.resource-group-exists }}
+        container-app-environment-name: ${{ inputs.container-app-environment-name }}
         container-app-name: ${{ inputs.container-app-name }}
         container-app-exists: ${{ inputs.container-app-exists }}
         sql-database-name: ${{ inputs.sql-database-name }}
