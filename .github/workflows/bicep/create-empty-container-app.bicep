@@ -1,13 +1,9 @@
-param container_app_environment_name string
 param container_app_name string
 
 @secure()
+param container_app_environment_id string
+@secure()
 param ghcr_password string
-
-
-resource container_app_environment 'Microsoft.App/managedEnvironments@2026-01-01' existing = {
-  name: container_app_environment_name
-}
 
 resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
@@ -17,8 +13,8 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: container_app_environment.id
-    environmentId: container_app_environment.id
+    managedEnvironmentId: container_app_environment_id
+    environmentId: container_app_environment_id
     workloadProfileName: 'Consumption'
     configuration: {
       activeRevisionsMode: 'Single'

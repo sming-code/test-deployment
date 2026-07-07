@@ -44,6 +44,14 @@ runs:
     run: |
       az group create -n ${{ inputs.resource-group-name }} -l uksouth --subscription ${{ inputs.subscription }}
 
+  - name: get-container-app-environment-id
+    id: container-app-environment-id
+    shell: bash
+    run: |
+      caeId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'${{ inputs.container-app-environment-name }}'`].id | [0]')"
+      echo "$caeId"
+      echo "cae-id=$caeId" >> $GITHUB_OUTPUT
+
   - name: ensure-container-app-exists
     if: ${{ inputs.container-app-exists == 0 }}
     uses: azure/bicep-deploy@v2
@@ -56,6 +64,6 @@ runs:
       resource-group-name: ${{ inputs.resource-group-name }}
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |
-        container_app_environment_name: ${{ inputs.container-app-environment-name }}
+        container_app_environment_name: ${{ steps.container-app-environment-id.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_password: ${{ inputs.gh-token }}
