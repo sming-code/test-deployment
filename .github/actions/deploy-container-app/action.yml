@@ -4,6 +4,9 @@ inputs:
   subscription:
     description: The subscription to add the resource group to
     required: true
+  subscription-id:
+    description: The id of the subscription to add the resource group to
+    required: true
   environment:
     description: The environment being deployed to
     required: true
@@ -49,7 +52,7 @@ runs:
       operation: create
       name: deploy-database
       scope: resourceGroup
-      subscription-id: ${{ inputs.subscription }}
+      subscription-id: ${{ inputs.subscription-id }}
       resource-group-name: ${{ inputs.resource-group-name }}
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |

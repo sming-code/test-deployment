@@ -63,6 +63,7 @@ jobs:
     - uses: ./.github/actions/deploy-container-app
       with:
         subscription: sub-tag-testing
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         environment: dev
         resource-group-name: ${{ inputs.resource-group-name }}
         resource-group-exists: ${{ inputs.resource-group-exists }}
