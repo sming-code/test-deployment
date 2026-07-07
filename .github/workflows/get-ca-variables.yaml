@@ -79,7 +79,7 @@ jobs:
         branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
         branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
         containerAppEnvironmentName="caenv-$Environment-tag-$Logical_Area"
-        containerAppEnvironmentId="$(az containerapp env list -g $resourceGroupName --query '[?name==`'$containerAppEnvironmentName'`].id | [0]')"
+        containerAppEnvironmentId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'$containerAppEnvironmentName'`].id | [0]')"
         containerAppName="ca-$serviceEnvironment$branchSuffix"
         resourceGroupName="rg-$containerAppName"
         sqlDatabaseName="sql-$containerAppName"
