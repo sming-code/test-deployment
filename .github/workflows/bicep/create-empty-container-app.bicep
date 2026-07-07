@@ -1,6 +1,5 @@
+param container_app_environment_name string
 param container_app_name string
-param environment_name string
-param container_image string
 
 @secure()
 param ghcr_user_name string
@@ -9,7 +8,7 @@ param ghcr_password string
 
 
 resource container_app_environment 'Microsoft.App/managedEnvironments@2026-01-01' existing = {
-  name: 'caenv_${environment_name}_tag_private_name'
+  name: container_app_environment_name
 }
 
 resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
@@ -38,7 +37,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     template: {
       containers: [
         {
-          image: 'ghcr.io/sming-code/${container_image}'
+          image: 'ghcr.io/sming-code/empty-service-worker:1.0.0'
           name: container_app_name
           command: []
           args: []

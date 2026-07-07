@@ -23,20 +23,12 @@ on:
         description: The resource name for the container app.
         required: true
         type: string
-      container-app-id:
-        description: The id of the existing container app - if it exists
-        required: true
-        type: string
       container-app-exists:
         description: Whether the container app currently exists
         required: true
         type: string
       sql-database-name:
         description: The resource name for the sql database.
-        required: true
-        type: string
-      sql-database-id:
-        description: The id of the existing sql database - if it exists
         required: true
         type: string
       sql-database-exists:
@@ -75,8 +67,7 @@ jobs:
         resource-group-name: ${{ inputs.resource-group-name }}
         resource-group-exists: ${{ inputs.resource-group-exists }}
         container-app-name: ${{ inputs.container-app-name }}
-        container-app-id: ${{ inputs.container-app-id }}
         container-app-exists: ${{ inputs.container-app-exists }}
         sql-database-name: ${{ inputs.sql-database-name }}
-        sql-database-id: ${{ inputs.sql-database-id }}
         sql-database-exists: ${{ inputs.sql-database-exists }}
+        gh-token: ${{ secrets.GITHUB_TOKEN }}

@@ -13,11 +13,11 @@ inputs:
   resource-group-exists:
     description: The name of the resource group to deploy associated resources to where possible.
     required: true
+  container-app-environment-name:
+    description: The resource name for the container app environment.
+    required: true
   container-app-name:
     description: The resource name for the container app.
-    required: true
-  container-app-id:
-    description: The id of the existing container app - if it exists
     required: true
   container-app-exists:
     description: Whether the container app currently exists
@@ -25,12 +25,13 @@ inputs:
   sql-database-name:
     description: The resource name for the sql database.
     required: true
-  sql-database-id:
-    description: The id of the existing sql database - if it exists
-    required: true
   sql-database-exists:
     description: Whether the sql database currently exists
     required: true
+  gh-token:
+    description: Github Token
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -40,8 +41,18 @@ runs:
     run: |
       az group create -n ${{ inputs.resource-group-name }} -l uksouth --subscription ${{ inputs.subscription }}
 
-  # - name: ensure-container-app-exists
-  #   if: ${{ inputs.container-app-exists == 0 }}
-  #   shell: bash
-  #   run: |
-  #     az containerapp
+  - name: ensure-container-app-exists
+    if: ${{ inputs.container-app-exists == 0 }}
+    uses: azure/bicep-deploy@v2
+    with:
+      type: deployment
+      operation: create
+      name: deploy-database
+      scope: resourceGroup
+      subscription-id: ${{ inputs.subscription }}
+      resource-group-name: ${{ inputs.resource-group-name }}
+      template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
+      parameters: |
+        container_app_environment_name: ${{ inputs.container-app-environment-name }}
+        container_app_name: ${{ inputs.container-app-name }}
+        ghcr_password: ${{ inputs.gh-token }}
