@@ -103,4 +103,4 @@ runs:
         environment_resource_group_name: ${{ inputs.environment-resource-group-name }}
         database_name: ${{ inputs.sql-database-name }}
         server_name: ${{ inputs.environment }}-tag
-        container_app_principal_id: ${{ steps.container-app-principal-id.principal-id }}
+        container_app_principal_id: ${{ steps.container-app-principal-id.outputs.principal-id }}
