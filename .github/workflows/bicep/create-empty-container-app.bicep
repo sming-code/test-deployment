@@ -58,7 +58,7 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
   }
 }
 
-module keyvaultAppPolicyAssignment 'keyvault-app-policy-assignment.bicep' = {
+module keyvaultAppPolicyAssignment 'keyvault-read-role-assignment.bicep' = {
   params: {
     keyvaultName: environmentKeyVaultName
     principalId: container_app.identity.principalId
