@@ -24,6 +24,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
       registries: [
         {
           server: 'ghcr.io'
+          username: 'USERNAME'
           passwordSecretRef: 'ghcr-password'
         }
       ]
