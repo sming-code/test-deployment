@@ -52,12 +52,10 @@ runs:
     shell: bash
     run: |
       caeId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'${{ inputs.container-app-environment-name }}'`].id | [0]')"
-      ghcrUserName="$(az keyvault secret show --name ghcr-${{ inputs.environment }}-tag-username --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
-      ghcrPassword="$(az keyvault secret show --name ghcr-${{ inputs.environment }}-tag-password --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
+      ghcrUserName="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-username --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
+      ghcrPassword="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-password --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
       echo "$caeId"
       echo "cae-id=$caeId" >> $GITHUB_OUTPUT
-      echo "ghcr-username=$ghcrUserName" >> $GITHUB_OUTPUT
-      echo "ghcr-password=$ghcrPassword" >> $GITHUB_OUTPUT
 
   - name: ensure-container-app-exists
     if: ${{ inputs.container-app-exists == 0 }}
@@ -73,5 +71,4 @@ runs:
       parameters: |
         container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
-        ghcr_password: ${{ steps.container-app-required-variables.outputs.ghcr-password }}
-        ghcr_username: ${{ steps.container-app-required-variables.outputs.ghcr-username }}
+        ghcr_password: ${{ github.token }}
