@@ -50,6 +50,10 @@ on:
         required: true
       AZURE_SUBSCRIPTION_ID:
         required: true
+      GHCR_USERNAME:
+        required: true
+      GHCR_TOKEN:
+        required: true
 
 permissions:
   id-token: write
