@@ -3,7 +3,9 @@ param container_app_name string
 @secure()
 param container_app_environment_id string
 @secure()
-param ghcr_password string
+param ghcr_username string
+@secure()
+param ghcr_token string
 
 resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
@@ -16,16 +18,16 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     configuration: {
       secrets: [
         {
-          name: 'ghcr-password'
-          value: ghcr_password
+          name: 'ghcr-token'
+          value: ghcr_token
         }
       ]
       activeRevisionsMode: 'Single'
       registries: [
         {
           server: 'ghcr.io'
-          username: 'USERNAME'
-          passwordSecretRef: 'ghcr-password'
+          username: ghcr_username
+          passwordSecretRef: 'ghcr-token'
         }
       ]
       maxInactiveRevisions: 100

@@ -34,8 +34,11 @@ inputs:
   sql-database-exists:
     description: Whether the sql database currently exists
     required: true
-  gh-token:
-    description: Github Token
+  ghcr-username:
+    description: The username to use for pulling from ghcr
+    required: true
+  ghcr-token:
+    description: The token to use for pulling from ghcr
     required: true
 
 runs:
@@ -69,4 +72,5 @@ runs:
       parameters: |
         container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
-        ghcr_password: ${{ github.token }}
+        ghcr_username: ${{ inputs.ghcr-username }}
+        ghcr_token: ${{ inputs.ghcr-token }}

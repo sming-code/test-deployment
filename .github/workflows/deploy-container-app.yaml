@@ -81,4 +81,5 @@ jobs:
         container-app-exists: ${{ inputs.container-app-exists }}
         sql-database-name: ${{ inputs.sql-database-name }}
         sql-database-exists: ${{ inputs.sql-database-exists }}
-        gh-token: ${{ secrets.GITHUB_TOKEN }}
+        ghcr-username: ${{ secrets.GHCR_USERNAME }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
