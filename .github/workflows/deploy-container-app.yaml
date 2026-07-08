@@ -11,6 +11,10 @@ on:
         description: The environment being deployed to
         required: true
         type: string
+      environment-resource-group-name:
+        description: The default resource group for the environment being deployed to
+        required: true
+        type: string
       revision-suffix:
         description: The revision suffix to use
         required: true
@@ -77,6 +81,7 @@ jobs:
         subscription: sub-tag-testing
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         environment: dev
+        environment-resource-group-name: ${{ inputs.environment-resource-group-name }}
         revision-suffix: ${{ inputs.revision-suffix }}
         resource-group-name: ${{ inputs.resource-group-name }}
         resource-group-exists: ${{ inputs.resource-group-exists }}

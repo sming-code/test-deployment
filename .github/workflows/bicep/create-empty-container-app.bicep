@@ -1,7 +1,7 @@
 param environment string
 param container_app_name string
 param environmentKeyVaultName string = 'kv-${environment}-tag'
-param environmentResourceGroupName string = 'rg-${environment}-tag'
+param environment_resource_group_name string
 
 @secure()
 param container_app_environment_id string
@@ -63,5 +63,5 @@ module keyvaultAppPolicyAssignment 'keyvault-secrets-user-role-assignment.bicep'
     keyvaultName: environmentKeyVaultName
     principalId: container_app.identity.principalId
   }
-  scope: resourceGroup(environmentResourceGroupName)
+  scope: resourceGroup(environment_resource_group_name)
 }

@@ -10,6 +10,9 @@ inputs:
   environment:
     description: The environment being deployed to
     required: true
+  environment-resource-group-name:
+    description: The default resource group for the environment being deployed to
+    required: true
   revision-suffix:
     description: The revision suffix for the container app
     required: true
@@ -71,6 +74,7 @@ runs:
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |
         environment: ${{ inputs.environment }}
+        environment_resource_group_name: ${{ inputs.environment-resource-group-name }}
         container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_username: ${{ inputs.ghcr-username }}
@@ -96,5 +100,7 @@ runs:
       resource-group-name: rg-dev-tag
       template-file: ./.github/workflows/bicep/create-database.bicep
       parameters: |
+        environment_resource_group_name: ${{ inputs.environment-resource-group-name }}
         database_name: ${{ inputs.sql-database-name }}
         server_name: ${{ inputs.environment }}-tag
+        container_app_principal_id: ${{ steps.container-app-principal-id.principal-id }}

@@ -62,6 +62,7 @@ jobs:
           echo "${{ needs.ca-variables.outputs.container-app-exists }}"
           echo "${{ needs.ca-variables.outputs.sql-database-name }}"
           echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
+          echo "${{ needs.ca-variables.outputs.environment-resource-group-name }}"
 
   deploy-dev:
     name: Deploy container app and related resources to dev
@@ -71,6 +72,7 @@ jobs:
     with:
       subscription: sub-tag-testing
       environment: dev
+      environment-resource-group-name: ${{ needs.ca-variables.outputs.environment-resource-group-name }}
       revision-suffix: ${{ needs.variables.outputs.version-no }}
       resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
       resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}

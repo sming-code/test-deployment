@@ -34,6 +34,8 @@ on:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-name }}
       sql-database-exists:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-exists }}
+      environment-resource-group-name:
+        value: rg-${{ inputs.environment }}-tag
     secrets:
       AZURE_CLIENT_ID:
         required: true

@@ -1,5 +1,9 @@
 param database_name string
 param server_name string
+param environment_resource_group_name string
+
+@secure()
+param container_app_principal_id string
 
 resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   name: server_name
@@ -73,6 +77,14 @@ resource geo_backup_policies 'Microsoft.Sql/servers/databases/geoBackupPolicies@
   properties: {
     state: 'Disabled'
   }
+}
+
+module sqlServerContributorPolicyAssignment 'sql-db-contributor-role-assignment.bicep' = {
+  params: {
+    serverName: server_name
+    principalId: container_app_principal_id
+  }
+  scope: resourceGroup(environment_resource_group_name)
 }
 
 output sql_server_name string = database_server.name
