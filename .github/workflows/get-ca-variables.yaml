@@ -48,7 +48,7 @@ permissions:
 
 jobs:
   build-ca-variables:
-    environment: dev
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     outputs:
       resource-group-name: ${{ steps.calculate.outputs.RESOURCE_GROUP_NAME }}
@@ -76,6 +76,7 @@ jobs:
         containerAppName="ca-$serviceEnvironment$branchSuffix"
         resourceGroupName="rg-$containerAppName"
         sqlDatabaseName="sql-$containerAppName"
+        environmentResourceGroupResponse="$(az group list --query '[?name==`'rg-$Environment-tag'`].name')"
         resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
         resourceGroupExists="$([[ $resourceGroupResponse == '[]' ]] && echo 0 || echo 1)"
         sqlDatabaseId="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].id | [0]')"

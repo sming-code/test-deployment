@@ -1,5 +1,7 @@
 param environment string
 param container_app_name string
+param environmentKeyVaultName string = 'kv-${environment}-tag'
+param environmentResourceGroupName string = 'rg-${environment}-tag'
 
 @secure()
 param container_app_environment_id string
@@ -56,25 +58,11 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
   }
 }
 
-resource keyvault 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
-  name: 'kv-${environment}-tag'
-}
-
-resource keyvaultPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2026-02-01' = {
-  properties: {
-    accessPolicies: [
-      {
-        objectId: container_app.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: container_app.identity.tenantId
-      }
-    ]
+module keyvaultAppPolicyAssignment 'keyvault-app-policy-assignment.bicep' = {
+  params: {
+    keyvaultName: environmentKeyVaultName
+    principalId: container_app.identity.principalId
+    tenantId: container_app.identity.tenantId
   }
-  parent: keyvault
-  name: 'add'
+  scope: resourceGroup(environmentResourceGroupName)
 }
