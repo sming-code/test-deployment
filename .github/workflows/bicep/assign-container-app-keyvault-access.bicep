@@ -1,4 +1,3 @@
-param environment string
 param container_app_name string
 
 @secure()
@@ -8,7 +7,7 @@ param ghcr_username string
 @secure()
 param ghcr_token string
 
-resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
+resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
   location: 'UK South'
   identity: {
@@ -54,27 +53,4 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
       }
     }
   }
-}
-
-resource keyvault 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
-  name: 'kv-${environment}-tag'
-}
-
-resource keyvaultPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2026-02-01' = {
-  properties: {
-    accessPolicies: [
-      {
-        objectId: container_app.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: container_app.identity.tenantId
-      }
-    ]
-  }
-  parent: keyvault
-  name: 'add'
 }

@@ -70,6 +70,7 @@ runs:
       resource-group-name: ${{ inputs.resource-group-name }}
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |
+        environment: ${{ inputs.environment }}
         container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_username: ${{ inputs.ghcr-username }}
