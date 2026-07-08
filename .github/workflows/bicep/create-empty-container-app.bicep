@@ -62,7 +62,6 @@ module keyvaultAppPolicyAssignment 'keyvault-app-policy-assignment.bicep' = {
   params: {
     keyvaultName: environmentKeyVaultName
     principalId: container_app.identity.principalId
-    tenantId: container_app.identity.tenantId
   }
   scope: resourceGroup(environmentResourceGroupName)
 }
