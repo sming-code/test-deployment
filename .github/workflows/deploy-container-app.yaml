@@ -11,6 +11,10 @@ on:
         description: The environment being deployed to
         required: true
         type: string
+      revision-suffix:
+        description: The revision suffix to use
+        required: true
+        type: string
       resource-group-name:
         description: The name of the resource group to deploy associated resources to where possible.
         required: true
@@ -69,6 +73,7 @@ jobs:
         subscription: sub-tag-testing
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         environment: dev
+        revision-suffix: ${{ inputs.revision-suffix }}
         resource-group-name: ${{ inputs.resource-group-name }}
         resource-group-exists: ${{ inputs.resource-group-exists }}
         container-app-environment-name: ${{ inputs.container-app-environment-name }}
