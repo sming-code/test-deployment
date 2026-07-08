@@ -5,16 +5,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
   name: keyvaultName
 }
 
-resource keyVaultReaderRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+resource keyVaultSecretsUserRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: subscription()
-  name: '21090545-7ca7-4776-b22c-e363652d74d2'
+  name: '4633458b-17de-408a-b874-0445c86b69e6'
 }
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(keyVault.id, principalId, keyVaultReaderRoleDefinition.id)
+  name: guid(keyVault.id, principalId, keyVaultSecretsUserRoleDefinition.id)
   scope: keyVault
   properties: {
-    roleDefinitionId: keyVaultReaderRoleDefinition.id
+    roleDefinitionId: keyVaultSecretsUserRoleDefinition.id
     principalId: principalId
     principalType: 'ServicePrincipal'
   }

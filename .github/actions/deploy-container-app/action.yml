@@ -75,3 +75,26 @@ runs:
         container_app_name: ${{ inputs.container-app-name }}
         ghcr_username: ${{ inputs.ghcr-username }}
         ghcr_token: ${{ inputs.ghcr-token }}
+
+  - name: get-container-app-principal-id
+    id: container-app-principal-id
+    shell: bash
+    run: |
+      principalId="$(az containerapp show --name ${{ inputs.container-app-name }} -g ${{ inputs.resource-group-name }} --query 'identity.principalId')"
+      echo "$principalId"
+      echo "principal-id=$principalId" >> $GITHUB_OUTPUT
+
+  - name: ensure-sql-database-exists
+    if: ${{ inputs.sql-database-exists == 0 }}
+    uses: azure/bicep-deploy@v2
+    with:
+      type: deployment
+      operation: create
+      name: deploy-new-sql-database
+      scope: resourceGroup
+      subscription-id: ${{ inputs.subscription-id }}
+      resource-group-name: rg-dev-tag
+      template-file: ./.github/workflows/bicep/create-database.bicep
+      parameters: |
+        database_name: ${{ inputs.sql-database-name }}
+        server_name: ${{ inputs.environment }}-tag

@@ -1,7 +1,5 @@
-param env_name string
-param server_name string = '${env_name}-tag'
-param logical_area string
-param service_name string
+param database_name string
+param server_name string
 
 resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   name: server_name
@@ -10,7 +8,7 @@ resource database_server 'Microsoft.Sql/servers@2025-02-01-preview' = {
 
 resource sql_database 'Microsoft.Sql/servers/databases@2025-02-01-preview' = {
   parent: database_server
-  name: 'sql-${server_name}-${logical_area}-${service_name}'
+  name: database_name
   location: 'uksouth'
   sku: {
     name: 'GP_S_Gen5_1'
