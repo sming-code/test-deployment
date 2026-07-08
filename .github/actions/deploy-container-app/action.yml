@@ -52,8 +52,6 @@ runs:
     shell: bash
     run: |
       caeId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'${{ inputs.container-app-environment-name }}'`].id | [0]')"
-      ghcrUserName="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-username --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
-      ghcrPassword="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-password --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
       echo "$caeId"
       echo "cae-id=$caeId" >> $GITHUB_OUTPUT
 
