@@ -58,6 +58,16 @@ runs:
       echo "$caeId"
       echo "cae-id=$caeId" >> $GITHUB_OUTPUT
 
+  - name: Deploy empty container app
+    uses: azure/container-apps-deploy-action@v1
+    with:
+      containerAppName: ${{ inputs.container-app-name }}
+      resourceGroup: ${{ inputs.resource-group-name }}
+      imageToDeploy: 'ghcr.io/sming-code/empty-service-worker:1.0.0'
+      registryUrl: ghcr.io
+      registryUsername: ${{ secrets.GHCR_USERNAME }}
+      registryPassword: ${{ secrets.GHCR_TOKEN }}
+
   - name: ensure-container-app-exists
     if: ${{ inputs.container-app-exists == 0 }}
     uses: azure/bicep-deploy@v2
