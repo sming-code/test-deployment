@@ -47,13 +47,17 @@ runs:
     run: |
       az group create -n ${{ inputs.resource-group-name }} -l uksouth --subscription ${{ inputs.subscription }}
 
-  - name: get-container-app-environment-id
-    id: container-app-environment-id
+  - name: get-container-app-required-variables
+    id: container-app-required-variables
     shell: bash
     run: |
       caeId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'${{ inputs.container-app-environment-name }}'`].id | [0]')"
+      ghcrUserName="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-username --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
+      ghcrPassword="$(az keyvault show --name ghcr-${{ inputs.environment }}-tag-password --vault-name kv-${{ inputs.environment }}-tag --query 'value')"
       echo "$caeId"
       echo "cae-id=$caeId" >> $GITHUB_OUTPUT
+      echo "ghcr-username=$ghcrUserName" >> $GITHUB_OUTPUT
+      echo "ghcr-password=$ghcrPassword" >> $GITHUB_OUTPUT
 
   - name: ensure-container-app-exists
     if: ${{ inputs.container-app-exists == 0 }}
@@ -61,12 +65,13 @@ runs:
     with:
       type: deployment
       operation: create
-      name: deploy-database
+      name: deploy-empty-container-app
       scope: resourceGroup
       subscription-id: ${{ inputs.subscription-id }}
       resource-group-name: ${{ inputs.resource-group-name }}
       template-file: ./.github/workflows/bicep/create-empty-container-app.bicep
       parameters: |
-        container_app_environment_id: ${{ steps.container-app-environment-id.outputs.cae-id }}
+        container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ inputs.container-app-name }}
-        ghcr_password: ${{ github.token }}
+        ghcr_password: ${{ steps.container-app-required-variables.outputs.ghcr-password }}
+        ghcr_username: ${{ steps.container-app-required-variables.outputs.ghcr-username }}

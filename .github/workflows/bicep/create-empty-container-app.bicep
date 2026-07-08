@@ -3,6 +3,8 @@ param container_app_name string
 @secure()
 param container_app_environment_id string
 @secure()
+param ghcr_username string
+@secure()
 param ghcr_password string
 
 resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
@@ -24,7 +26,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
       registries: [
         {
           server: 'ghcr.io'
-          username: 'USERNAME'
+          username: ghcr_username
           passwordSecretRef: 'ghcr-password'
         }
       ]
@@ -34,10 +36,8 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     template: {
       containers: [
         {
-          image: 'sming-code/empty-service-worker:1.0.0'
+          image: 'ghcr.io/sming-code/empty-service-worker:1.0.0'
           name: container_app_name
-          command: []
-          args: []
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'
