@@ -1,4 +1,3 @@
-param revision_suffix string
 param container_app_name string
 
 @secure()
@@ -44,7 +43,7 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
           }
         }
       ]
-      revisionSuffix: revision_suffix
+      revisionSuffix: '0000'
       scale: {
         minReplicas: 1
         maxReplicas: 1
