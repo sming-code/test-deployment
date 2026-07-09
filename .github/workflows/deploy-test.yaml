@@ -27,13 +27,13 @@ jobs:
       run: |
         anonymisedIntegratedAuthConnectionString="$(az sql db show-connection-string --subscription sub-tag-testing -s dev-tag -n sql-ca-traveller-svc-dev-prd-336 -c ado.net -a ADIntegrated)"
         echo "$anonymisedIntegratedAuthConnectionString"
-        integratedAuthConnectionString=${anonymisedIntegratedAuthConnectionString/<username>/ca-traveller-svc-dev-prd-336}
+        integratedAuthConnectionString=${anonymisedIntegratedAuthConnectionString/<username>/sming-entra}
         echo "$integratedAuthConnectionString"
 
         echo "connection-string=$integratedAuthConnectionString" >> $GITHUB_OUTPUT
 
     - uses: azure/sql-action@v2.3
       with:
-        connection-string: ${{ steps.get-connection-string.outputs.connection-string }}
+        connection-string: "Server=tcp:dev-tag.database.windows.net,1433;Initial Catalog=sql-ca-traveller-svc-dev-prd-336;Persist Security Info=False;User ID=sming-entra;MultipleActiveResultSets=False;Encrypt=true;TrustServerCertificate=False;Authentication=Active Directory Integrated"
         path: ./.github/workflows/initialize-user.sql
         arguments: '-v CaName=ca-traveller-svc-dev-prd-336'
