@@ -34,6 +34,6 @@ jobs:
 
     - uses: azure/sql-action@v2.3
       with:
-        connection-string: "Server=tcp:dev-tag.database.windows.net,1433;Initial Catalog=sql-ca-traveller-svc-dev-prd-336;Persist Security Info=False;User ID=${{ secrets.SQL_ADMIN_USERNAME }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Authentication='Active Directory Password';"
+        connection-string: "Server=tcp:dev-tag.database.windows.net,1433;Initial Catalog=sql-ca-traveller-svc-dev-prd-336;Persist Security Info=False;User ID='${{ secrets.SQL_ADMIN_USERNAME }}';Password='${{ secrets.SQL_ADMIN_PASSWORD }}';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Authentication='Active Directory Password';"
         path: ./.github/workflows/initialize-user.sql
         arguments: '-v CaName=ca-traveller-svc-dev-prd-336'
