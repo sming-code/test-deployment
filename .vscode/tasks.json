@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "sqlproj: Build SmingCode.DatabaseInitialization",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/SmingCode.DatabaseInitialization.sqlproj"
+			],
+			"problemMatcher": "$sqlproj-problem-matcher",
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "Builds the SmingCode.DatabaseInitialization SQL project"
+		}
+	]
+}

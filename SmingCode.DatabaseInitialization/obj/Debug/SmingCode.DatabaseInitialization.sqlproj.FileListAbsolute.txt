@@ -1,0 +1,5 @@
+/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/bin/Debug/SmingCode.DatabaseInitialization.dacpac
+/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/obj/Debug/Model.xml
+/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/obj/Debug/refactor.xml
+/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/obj/Debug/postdeploy.sql
+/home/matt/development/sming-code/test-deployment/SmingCode.DatabaseInitialization/obj/Debug/predeploy.sql

@@ -104,3 +104,9 @@ runs:
         database_name: ${{ inputs.sql-database-name }}
         server_name: ${{ inputs.environment }}-tag
         container_app_principal_id: ${{ steps.container-app-principal-id.outputs.principal-id }}
+
+  - name: ensure-container-app-access
+    if: ${{ inputs.sql-database-exists == 0 }}
+    uses: azure/sql-action@v2.3
+    with:
+      connection-string: 
