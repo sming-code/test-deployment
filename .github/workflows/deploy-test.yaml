@@ -6,6 +6,10 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy-container-app:
     environment: dev
