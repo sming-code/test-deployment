@@ -1,35 +1,36 @@
+param environment string
 param container_app_name string
-param environment_name string
-param container_image string
+param environmentKeyVaultName string = 'kv-${environment}-tag'
+param environment_resource_group_name string
 
 @secure()
-param ghcr_user_name string
+param container_app_environment_id string
 @secure()
-param ghcr_password string
+param ghcr_username string
+@secure()
+param ghcr_token string
 
-
-resource container_app_environment 'Microsoft.App/managedEnvironments@2026-01-01' existing = {
-  name: 'caenv_${environment_name}_tag_private_name'
-}
-
-resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App/containerapps@2026-01-01' = {
+resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
   location: 'UK South'
-  kind: 'containerapps'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: container_app_environment.id
-    environmentId: container_app_environment.id
-    workloadProfileName: 'Consumption'
+    environmentId: container_app_environment_id
     configuration: {
+      secrets: [
+        {
+          name: 'ghcr-token'
+          value: ghcr_token
+        }
+      ]
       activeRevisionsMode: 'Single'
       registries: [
         {
           server: 'ghcr.io'
-          username: ghcr_user_name
-          passwordSecretRef: ghcr_password
+          username: ghcr_username
+          passwordSecretRef: 'ghcr-token'
         }
       ]
       maxInactiveRevisions: 100
@@ -38,16 +39,15 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
     template: {
       containers: [
         {
-          image: 'ghcr.io/sming-code/${container_image}'
+          image: 'ghcr.io/sming-code/empty-service-worker:1.0.0'
           name: container_app_name
-          command: []
-          args: []
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'
           }
         }
       ]
+      revisionSuffix: '0000'
       scale: {
         minReplicas: 1
         maxReplicas: 1
@@ -56,4 +56,12 @@ resource containerapps_ca_traveller_svc_dev_prd_334_name_resource 'Microsoft.App
       }
     }
   }
+}
+
+module keyvaultAppPolicyAssignment 'keyvault-secrets-user-role-assignment.bicep' = {
+  params: {
+    keyvaultName: environmentKeyVaultName
+    principalId: container_app.identity.principalId
+  }
+  scope: resourceGroup(environment_resource_group_name)
 }

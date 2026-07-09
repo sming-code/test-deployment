@@ -1,0 +1,94 @@
+name: Deploy database
+
+on:
+  workflow_call:
+    inputs:
+      subscription:
+        description: The subscription to add the resource group to
+        required: true
+        type: string
+      environment:
+        description: The environment being deployed to
+        required: true
+        type: string
+      environment-resource-group-name:
+        description: The default resource group for the environment being deployed to
+        required: true
+        type: string
+      revision-suffix:
+        description: The revision suffix to use
+        required: true
+        type: string
+      resource-group-name:
+        description: The name of the resource group to deploy associated resources to where possible.
+        required: true
+        type: string
+      resource-group-exists:
+        description: The name of the resource group to deploy associated resources to where possible.
+        required: true
+        type: string
+      container-app-environment-name:
+        description: The resource name for the container app.
+        required: true
+        type: string
+      container-app-name:
+        description: The resource name for the container app.
+        required: true
+        type: string
+      container-app-exists:
+        description: Whether the container app currently exists
+        required: true
+        type: string
+      sql-database-name:
+        description: The resource name for the sql database.
+        required: true
+        type: string
+      sql-database-exists:
+        description: Whether the sql database currently exists
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+      GHCR_USERNAME:
+        required: true
+      GHCR_TOKEN:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-container-app:
+    environment: ${{ inputs.environment }}
+    name: Deploy container app to azure
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - uses: ./.github/actions/deploy-container-app
+      with:
+        subscription: sub-tag-testing
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        environment: dev
+        environment-resource-group-name: ${{ inputs.environment-resource-group-name }}
+        revision-suffix: ${{ inputs.revision-suffix }}
+        resource-group-name: ${{ inputs.resource-group-name }}
+        resource-group-exists: ${{ inputs.resource-group-exists }}
+        container-app-environment-name: ${{ inputs.container-app-environment-name }}
+        container-app-name: ${{ inputs.container-app-name }}
+        container-app-exists: ${{ inputs.container-app-exists }}
+        sql-database-name: ${{ inputs.sql-database-name }}
+        sql-database-exists: ${{ inputs.sql-database-exists }}
+        ghcr-username: ${{ secrets.GHCR_USERNAME }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
