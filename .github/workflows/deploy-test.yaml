@@ -25,7 +25,7 @@ jobs:
 
     - id: get-connection-string
       run: |
-        anonymisedIntegratedAuthConnectionString="$(az sql db show-connection-string --subscription sub-tag-testing -s dev-tag -n sql-ca-traveller-svc-dev-prd-336 -c ado.net -a ADDefault)"
+        anonymisedIntegratedAuthConnectionString="$(az sql db show-connection-string --subscription sub-tag-testing -s dev-tag -n sql-ca-traveller-svc-dev-prd-336 -c ado.net)"
         echo "$anonymisedIntegratedAuthConnectionString"
         integratedAuthConnectionString=${anonymisedIntegratedAuthConnectionString/<username>/sming-entra}
         echo "$integratedAuthConnectionString"
