@@ -109,4 +109,6 @@ runs:
     if: ${{ inputs.sql-database-exists == 0 }}
     uses: azure/sql-action@v2.3
     with:
-      connection-string: 
+      connection-string: "Server=tcp:dev-tag.database.windows.net,1433;Initial Catalog=${{ inputs.sql-database-name }};Authentication=Active Directory Default;Encrypt=True;"
+      path: ./.github/workflows/initialize-user.sql
+      arguments: '-v CaName=${{ inputs.container-app-name }}'
