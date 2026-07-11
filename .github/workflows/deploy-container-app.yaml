@@ -86,6 +86,7 @@ jobs:
 
     - uses: ./.github/actions/deploy-container-app
       env:
+        environment: ${{ matrix.environment }}
         subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknown'))) }}
         subscription-id: ${{ case(matrix.environment == 'dev', secrets.subscription-id-dev, case(matrix.environment == 'test', secrets.subscription-id-test, case(matrix.environment == 'prod', secrets.subscription-id-prod, 'unknown'))) }}
         environment-resource-group-name: ${{ steps.ca-variables.outputs.environment-resource-group-name }}
