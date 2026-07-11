@@ -99,6 +99,8 @@ jobs:
         sql-server-name: ${{ steps.ca-variables.outputs.sql-server-name }}
         sql-database-name: ${{ steps.ca-variables.outputs.sql-database-name }}
         sql-database-exists: ${{ steps.ca-variables.outputs.sql-database-exists }}
+        ghcr-username: ${{ secrets.ghcr-username }}
+        ghcr-token: ${{ secrets.ghcr-token }}
 
 
   # ca-variables:
