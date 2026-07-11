@@ -31,70 +31,92 @@ jobs:
     - name: Display done
       run: echo "Variables loaded..."
     outputs:
+      logical-area: private
+      service-name: traveller-svc
       version-no: ${{ steps.get-version.outputs.version-no }}
       last-release-tag: ${{ steps.get-version.outputs.last-release-tag }}
 
   deployments:
-    name: Deploy to environments
-    runs-on: ubuntu-latest
+    name: Deploy container app and related resources to environments
     needs: [ variables ]
-    env:
-      logical-area: private
-      service-name: traveller-svc
+    if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
+    uses: ./.github/workflows/deploy-container-app.yaml
+    with:
+      logical-area: ${{ needs.variables.outputs.logical-area }}
+      service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
+    secrets: 
       ghcr-username: ${{ secrets.GHCR_USERNAME }}
       ghcr-token: ${{ secrets.GHCR_TOKEN }}
+      client-id-dev: ${{ secrets.AZURE_CLIENT_ID_DEV }}
+      client-id-test: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+      client-id-prod: ${{ secrets.AZURE_CLIENT_ID_PROD }}
+      tenant-id-dev: ${{ secrets.AZURE_TENANT_ID_DEV }}
+      tenant-id-test: ${{ secrets.AZURE_TENANT_ID_TEST }}
+      tenant-id-prod: ${{ secrets.AZURE_TENANT_ID_PROD }}
+      subscription-id-dev: ${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}
+      subscription-id-test: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
+      subscription-id-prod: ${{ secrets.AZURE_SUBSCRIPTION_ID_PROD }}
 
-    strategy:
-      fail-fast: true
-      matrix:
-        environment:
-          - dev
-          - test
-          - prod
-      max-parallel: 1
-    environment: ${{ matrix.environment }}
-    steps:
-    - uses: actions/checkout@v6
+    # strategy:
+    #   fail-fast: true
+    #   matrix:
+    #     environment:
+    #       - dev
+    #       - test
+    #       - prod
+    #   max-parallel: 1
+    # environment: ${{ matrix.environment }}
+    # steps:
+    # - uses: ./.github/actions/deploy-container-app
+    #   with:
+    #     environment: ${{ matrix.environment }}
+    #     client-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_CLIENT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_CLIENT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_CLIENT_ID_PROD, 'unknows'))) }}
+    #     tenant-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_TENANT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_TENANT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_TENANT_ID_PROD, 'unknows'))) }}
+    #     subscription-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_SUBSCRIPTION_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_SUBSCRIPTION_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_SUBSCRIPTION_ID_PROD, 'unknows'))) }}
 
-    - uses: azure/login@v3
-      with:
-        client-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_CLIENT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_CLIENT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_CLIENT_ID_PROD, 'unknows'))) }}
-        tenant-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_TENANT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_TENANT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_TENANT_ID_PROD, 'unknows'))) }}
-        subscription-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_SUBSCRIPTION_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_SUBSCRIPTION_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_SUBSCRIPTION_ID_PROD, 'unknows'))) }}
+    #   secrets:
 
-    - name: Generate container app variables
-      id: ca-variables
-      uses: ./.github/workflows/get-ca-variables.yaml
-      with:
-        environment: ${{ matrix.environment }}
+    # - uses: actions/checkout@v6
 
-    - id: output-test
-      run: |
-        echo "${{ steps.ca-variables.outputs.resource-group-name }}"
-        echo "${{ steps.ca-variables.outputs.resource-group-exists }}"
-        echo "${{ steps.ca-variables.outputs.container-app-environment-name }}"
-        echo "${{ steps.ca-variables.outputs.container-app-name }}"
-        echo "${{ steps.ca-variables.outputs.container-app-exists }}"
-        echo "${{ steps.ca-variables.outputs.sql-server-name }}"
-        echo "${{ steps.ca-variables.outputs.sql-database-name }}"
-        echo "${{ steps.ca-variables.outputs.sql-database-exists }}"
-        echo "${{ steps.ca-variables.outputs.environment-resource-group-name }}"
+    # - uses: azure/login@v3
+    #   with:
+    #     client-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_CLIENT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_CLIENT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_CLIENT_ID_PROD, 'unknows'))) }}
+    #     tenant-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_TENANT_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_TENANT_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_TENANT_ID_PROD, 'unknows'))) }}
+    #     subscription-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_SUBSCRIPTION_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_SUBSCRIPTION_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_SUBSCRIPTION_ID_PROD, 'unknows'))) }}
 
-    - uses: ./.github/actions/deploy-container-app
-      env:
-        subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknows'))) }}
-        subscription-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_SUBSCRIPTION_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_SUBSCRIPTION_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_SUBSCRIPTION_ID_PROD, 'unknows'))) }}
-        environment-resource-group-name: ${{ steps.ca-variables.outputs.environment-resource-group-name }}
-        revision-suffix: ${{ needs.variables.outputs.version-no }}
-        resource-group-name: ${{ steps.ca-variables.outputs.resource-group-name }}
-        resource-group-exists: ${{ steps.ca-variables.outputs.resource-group-exists }}
-        container-app-environment-name: ${{ steps.ca-variables.outputs.container-app-environment-name }}
-        container-app-name: ${{ steps.ca-variables.outputs.container-app-name }}
-        container-app-exists: ${{ steps.ca-variables.outputs.container-app-exists }}
-        sql-server-name: ${{ steps.ca-variables.outputs.sql-server-name }}
-        sql-database-name: ${{ steps.ca-variables.outputs.sql-database-name }}
-        sql-database-exists: ${{ steps.ca-variables.outputs.sql-database-exists }}
+    # - name: Generate container app variables
+    #   id: ca-variables
+    #   uses: ./.github/workflows/get-ca-variables.yaml
+    #   with:
+    #     environment: ${{ matrix.environment }}
+
+    # - id: output-test
+    #   run: |
+    #     echo "${{ steps.ca-variables.outputs.resource-group-name }}"
+    #     echo "${{ steps.ca-variables.outputs.resource-group-exists }}"
+    #     echo "${{ steps.ca-variables.outputs.container-app-environment-name }}"
+    #     echo "${{ steps.ca-variables.outputs.container-app-name }}"
+    #     echo "${{ steps.ca-variables.outputs.container-app-exists }}"
+    #     echo "${{ steps.ca-variables.outputs.sql-server-name }}"
+    #     echo "${{ steps.ca-variables.outputs.sql-database-name }}"
+    #     echo "${{ steps.ca-variables.outputs.sql-database-exists }}"
+    #     echo "${{ steps.ca-variables.outputs.environment-resource-group-name }}"
+
+    # - uses: ./.github/actions/deploy-container-app
+    #   env:
+    #     subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknows'))) }}
+    #     subscription-id: ${{ case(matrix.environment == 'dev', secrets.AZURE_SUBSCRIPTION_ID_DEV, case(matrix.environment == 'test', secrets.AZURE_SUBSCRIPTION_ID_TEST, case(matrix.environment == 'prod', secrets.AZURE_SUBSCRIPTION_ID_PROD, 'unknows'))) }}
+    #     environment-resource-group-name: ${{ steps.ca-variables.outputs.environment-resource-group-name }}
+    #     revision-suffix: ${{ needs.variables.outputs.version-no }}
+    #     resource-group-name: ${{ steps.ca-variables.outputs.resource-group-name }}
+    #     resource-group-exists: ${{ steps.ca-variables.outputs.resource-group-exists }}
+    #     container-app-environment-name: ${{ steps.ca-variables.outputs.container-app-environment-name }}
+    #     container-app-name: ${{ steps.ca-variables.outputs.container-app-name }}
+    #     container-app-exists: ${{ steps.ca-variables.outputs.container-app-exists }}
+    #     sql-server-name: ${{ steps.ca-variables.outputs.sql-server-name }}
+    #     sql-database-name: ${{ steps.ca-variables.outputs.sql-database-name }}
+    #     sql-database-exists: ${{ steps.ca-variables.outputs.sql-database-exists }}
 
 
   # ca-variables:
