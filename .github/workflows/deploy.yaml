@@ -16,8 +16,6 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-permissions: write-all
-
 jobs:
   variables:
     name: Generate variables
