@@ -50,6 +50,7 @@ jobs:
           - dev
           - test
           - prod
+      max-parallel: 1
     environment: ${{ matrix.environment }}
     steps:
     - uses: actions/checkout@v6
