@@ -39,6 +39,10 @@ on:
         description: Whether the container app currently exists
         required: true
         type: string
+      sql-server-name:
+        description: The resource name for the sql server.
+        required: true
+        type: string
       sql-database-name:
         description: The resource name for the sql database.
         required: true
@@ -88,6 +92,7 @@ jobs:
         container-app-environment-name: ${{ inputs.container-app-environment-name }}
         container-app-name: ${{ inputs.container-app-name }}
         container-app-exists: ${{ inputs.container-app-exists }}
+        sql-server-name: ${{ inputs.sql-server-name }}
         sql-database-name: ${{ inputs.sql-database-name }}
         sql-database-exists: ${{ inputs.sql-database-exists }}
         ghcr-username: ${{ secrets.GHCR_USERNAME }}
