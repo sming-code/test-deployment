@@ -61,10 +61,10 @@ runs:
         containerAppId="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].id | [0]')"
         containerAppExists="$([[ $containerAppId == '' ]] && echo 0 || echo 1)";
       fi
-      echo "RESOURCE_GROUP_NAME=$resourceGroupName" >> $GITHUB_OUTPUT
-      echo "RESOURCE_GROUP_EXISTS=$resourceGroupExists" >> $GITHUB_OUTPUT
-      echo "CONTAINER_APP_ENVIRONMENT_NAME=$containerAppEnvironmentName" >> $GITHUB_OUTPUT
-      echo "CONTAINER_APP_NAME=$containerAppName" >> $GITHUB_OUTPUT
-      echo "CONTAINER_APP_EXISTS=$containerAppExists" >> $GITHUB_OUTPUT
-      echo "SQL_DATABASE_NAME=$sqlDatabaseName" >> $GITHUB_OUTPUT
-      echo "SQL_DATABASE_EXISTS=$sqlDatabaseExists" >> $GITHUB_OUTPUT
+      echo "resource-group-name=$resourceGroupName" >> $GITHUB_OUTPUT
+      echo "resource-group-exists=$resourceGroupExists" >> $GITHUB_OUTPUT
+      echo "container-app-environment-name=$containerAppEnvironmentName" >> $GITHUB_OUTPUT
+      echo "container-app-name=$containerAppName" >> $GITHUB_OUTPUT
+      echo "container-app-exists=$containerAppExists" >> $GITHUB_OUTPUT
+      echo "sql-database-name=$sqlDatabaseName" >> $GITHUB_OUTPUT
+      echo "sql-database-exists=$sqlDatabaseExists" >> $GITHUB_OUTPUT
