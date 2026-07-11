@@ -39,6 +39,9 @@ runs:
   - id: build-ca-variables
     shell: bash
     run: |
+      echo "${{ inputs.environment }}"
+      echo "${{ inputs.logical-area }}"
+      echo "${{ inputs.service-name }}"
       serviceEnvironment="${{ inputs.service-name }}-${{ inputs.environment }}"
       branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
       branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
