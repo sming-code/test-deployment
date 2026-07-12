@@ -34,6 +34,9 @@ runs:
         environment_resource_group_name: ${{ env.environment-resource-group-name }}
         container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
         container_app_name: ${{ env.container-app-name }}
+        app_insights_name: ${{ env.app-insights-name }}
+        app_insights_exists: ${{ env.app-insights-exists }}
+        log_analytics_workspace_name: ${{ env.log-analytics-workspace-name }}
         ghcr_username: ${{ env.ghcr-username }}
         ghcr_token: ${{ env.ghcr-token }}
 

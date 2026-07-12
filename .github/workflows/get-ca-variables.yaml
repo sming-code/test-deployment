@@ -38,6 +38,8 @@ on:
         value: ${{ jobs.build-ca-variables.outputs.sql-database-exists }}
       environment-resource-group-name:
         value: rg-${{ inputs.environment }}-tag
+      log-analytics-workspace-name:
+        value: log-analytics-${{ inputs.environment }}-tag
 jobs:
   build-ca-variables:
     environment: ${{ inputs.environment }}
