@@ -73,5 +73,6 @@ module app_insights 'create-app-insights.bicep' = if (app_insights_exists == 0) 
   params: {
     appInsightsName: app_insights_name
     logAnalyticsWorkspaceName: log_analytics_workspace_name
+    logAnalyticsResourceGroupName: environment_resource_group_name
   }
 }
