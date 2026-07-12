@@ -4,7 +4,7 @@ param environmentKeyVaultName string = 'kv-${environment}-tag'
 param environment_resource_group_name string
 param log_analytics_workspace_name string
 param app_insights_name string
-param app_insights_exists string
+param app_insights_exists int
 
 @secure()
 param container_app_environment_id string
@@ -69,7 +69,7 @@ module keyvaultAppPolicyAssignment 'keyvault-secrets-user-role-assignment.bicep'
   scope: resourceGroup(environment_resource_group_name)
 }
 
-module app_insights 'create-app-insights.bicep' = if (app_insights_exists == '0') {
+module app_insights 'create-app-insights.bicep' = if (app_insights_exists == 0) {
   params: {
     appInsightsName: app_insights_name
     logAnalyticsWorkspaceName: log_analytics_workspace_name
