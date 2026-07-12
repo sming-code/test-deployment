@@ -51,7 +51,7 @@ runs:
       containerAppEnvironmentName="caenv-${{ inputs.environment }}-tag-${{ inputs.logical-area }}"
       containerAppName="ca-$serviceEnvironment$branchSuffix"
       appInsightsName="insight-$containerAppName"
-      resourceGroupName="rg-$containerAppName"
+      resourceGroupName="rg-$serviceEnvironment$branchSuffix"
       sqlDatabaseName="sql-$containerAppName"
       environmentResourceGroupResponse="$(az group list --query '[?name==`'rg-${{ inputs.environment }}-tag'`].name')"
       resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
