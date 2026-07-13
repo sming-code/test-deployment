@@ -1,10 +1,12 @@
 param app_config_name string
 param app_insights_name string
 param container_app_name string
+param service_name string
 // param container_app_image_name string
 param container_app_image_tag string
 param cpu string
 param database_connection_string string
+param environment_name string
 param environment_resource_group_name string
 param memory string
 param min_replicas int
@@ -100,6 +102,14 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
             {
               name: 'Database__ConnectionString'
               value: database_connection_string
+            }
+            {
+              name: 'Tag_Environment'
+              value: environment_name
+            }
+            {
+              name: 'Service_Name'
+              value: service_name
             }
           ]
         }

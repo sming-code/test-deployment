@@ -3,24 +3,12 @@ name: Deploy container app to environments
 on:
   workflow_call:
     inputs:
-      logical-area:
-        description: The logical container app environment being deployed to
-        required: true
-        type: string
-      service-name:
-        description: The name of the service being deployed
-        required: true
-        type: string
       version-no:
         description: The version number of the container image
         required: true
         type: string
       environments:
         description: The environments to deploy to
-        required: true
-        type: string
-      service-types:
-        description: The service types to deploy
         required: true
         type: string
     secrets: 
@@ -58,7 +46,7 @@ jobs:
       fail-fast: true
       matrix:
         environment: ${{ fromJson(inputs.environments) }}
-        service-type: ${{ fromJson(inputs.service-types) }}
+        service-type: ${{ fromJson(env.service-types) }}
       max-parallel: 1
     environment: ${{ matrix.environment }}
     steps:
@@ -75,8 +63,6 @@ jobs:
       uses: ./.github/actions/get-ca-variables
       with:
         environment: ${{ matrix.environment }}
-        logical-area: ${{ inputs.logical-area }}
-        service-name: ${{ inputs.service-name }}
 
     - id: output-test
       run: |
@@ -95,7 +81,6 @@ jobs:
     - uses: ./.github/actions/deploy-container-app
       env:
         environment-name: ${{ matrix.environment }}
-        service-name: ${{ inputs.service-name }}
         version-no: ${{ inputs.version-no }}
         subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknown'))) }}
         subscription-id: ${{ case(matrix.environment == 'dev', secrets.subscription-id-dev, case(matrix.environment == 'test', secrets.subscription-id-test, case(matrix.environment == 'prod', secrets.subscription-id-prod, 'unknown'))) }}

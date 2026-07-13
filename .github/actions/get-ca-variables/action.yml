@@ -5,14 +5,6 @@ inputs:
     description: The environment being deployed to
     required: true
     type: string
-  logical-area:
-    description: The logical area of our ecosystem - i.e. public, private
-    required: true
-    type: string
-  service-name:
-    description: The name of the service
-    required: true
-    type: string
 outputs:
   resource-group-name:
     value: ${{ steps.build-ca-variables.outputs.resource-group-name }}
@@ -45,11 +37,11 @@ runs:
   - id: build-ca-variables
     shell: bash
     run: |
-      serviceEnvironment="${{ inputs.service-name }}-${{ inputs.environment }}"
+      serviceEnvironment="${{ env.app-name }}-${{ inputs.environment }}"
       branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
       branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
-      containerAppEnvironmentName="caenv-${{ inputs.environment }}-tag-${{ inputs.logical-area }}"
-      containerAppName="ca-${{ inputs.service-name }}-${{ inputs.environment }}$branchSuffix"
+      containerAppEnvironmentName="caenv-${{ inputs.environment }}-tag-${{ env.logical-area }}"
+      containerAppName="ca-${{ env.app-name }}-${{ inputs.environment }}$branchSuffix"
       appInsightsName="insight-$containerAppName"
       resourceGroupName="$([[ $branchSuffix == '' ]] && echo rg-$containerAppName || echo rg-${{ inputs.environment }}$branchSuffix)"
       sqlDatabaseName="sql-$containerAppName"

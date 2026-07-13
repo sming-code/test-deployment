@@ -15,6 +15,10 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  logical-area: private
+  app-name: traveller
+  service-name: "Traveller Service"
+  service-types: '["Api"]'
 
 jobs:
   variables:
@@ -29,13 +33,10 @@ jobs:
     - name: Display done
       run: echo "Variables loaded..."
     outputs:
-      logical-area: private
-      service-name: traveller-svc
-      branch-deploy-environments: '["dev"]'
-      environments: '["dev","test","prod"]'
-      service-types: '["Api"]'
       version-no: ${{ steps.get-version.outputs.version-no }}
       last-release-tag: ${{ steps.get-version.outputs.last-release-tag }}
+      branch-deploy-environments: '["dev"]'
+      environments: '["dev","test","prod"]'
 
   deployments:
     name: Deploy container app and related resources to environments
@@ -43,11 +44,8 @@ jobs:
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
     uses: ./.github/workflows/deploy-container-app.yaml
     with:
-      logical-area: ${{ needs.variables.outputs.logical-area }}
-      service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
       environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.branch-deploy-environments) }}
-      service-types: ${{ needs.variables.outputs.service-types }}
     secrets: 
       ghcr-username: ${{ secrets.GHCR_USERNAME }}
       ghcr-token: ${{ secrets.GHCR_TOKEN }}
