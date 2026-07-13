@@ -46,7 +46,8 @@ jobs:
     with:
       version-no: ${{ needs.variables.outputs.version-no }}
       environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.branch-deploy-environments) }}
-    secrets: 
+      service-types: "$service-types"
+    secrets:
       ghcr-username: ${{ secrets.GHCR_USERNAME }}
       ghcr-token: ${{ secrets.GHCR_TOKEN }}
       client-id-dev: ${{ secrets.AZURE_CLIENT_ID_DEV }}
