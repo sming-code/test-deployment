@@ -30,7 +30,7 @@ jobs:
       run: echo "Variables loaded..."
     outputs:
       logical-area: private
-      service-name: demo-customer-svc-api
+      service-name: traveller-svc
       branch-deploy-environments: '["dev"]'
       environments: '["dev","test","prod"]'
       service-types: '["Api"]'
@@ -46,7 +46,7 @@ jobs:
       logical-area: ${{ needs.variables.outputs.logical-area }}
       service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
-      environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.environments) }}
+      environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.branch-deploy-environments) }}
       service-types: ${{ needs.variables.outputs.service-types }}
     secrets: 
       ghcr-username: ${{ secrets.GHCR_USERNAME }}

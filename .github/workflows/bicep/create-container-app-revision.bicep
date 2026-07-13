@@ -80,7 +80,8 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
     template: {
       containers: [
         {
-          image: 'ghcr.io/sming-code/${container_app_image_name}:${container_app_image_tag}'
+          image: 'ghcr.io/sming-code/demo-customer-svc-api:1.0.28'
+          // image: 'ghcr.io/sming-code/${container_app_image_name}:${container_app_image_tag}'
           name: container_app_name
           resources: {
             cpu: json(cpu)
