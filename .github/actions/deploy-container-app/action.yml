@@ -91,7 +91,7 @@ runs:
         memory='1Gi'
         min_replicas=1
         max_replicas=1
-        database_connection_string='Server=tcp:${{ env.sql-server-name }}.database.windows.net,1433;Authentication=Active Directory Managed Identity; Encrypt=True;Database=${{ env.sql-database-name }}'
+        database_connection_string='Server=tcp:${{ env.sql-server-name }}.database.windows.net,1433;Authentication="Active Directory Managed Identity"; Encrypt=True;Database=${{ env.sql-database-name }}'
         container_app_environment_id=${{ steps.container-app-required-variables.outputs.cae-id }}
         ghcr_username=${{ env.ghcr-username }}
         ghcr_token=${{ env.ghcr-token }}
