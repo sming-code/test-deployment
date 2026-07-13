@@ -1,7 +1,7 @@
 param app_config_name string
 param app_insights_name string
 param container_app_name string
-param container_app_image_name string
+// param container_app_image_name string
 param container_app_image_tag string
 param cpu string
 param database_connection_string string
