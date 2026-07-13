@@ -14,7 +14,7 @@ runs:
     id: container-app-required-variables
     shell: bash
     run: |
-      caeId="$(az containerapp env list -g rg-dev-tag --query '[?name==`'${{ env.container-app-environment-name }}'`].id | [0]')"
+      caeId="$(az containerapp env list -g ${{ env.environment-resource-group-name }} --query '[?name==`'${{ env.container-app-environment-name }}'`].id | [0]')"
       echo "$caeId"
       echo "cae-id=$caeId" >> $GITHUB_OUTPUT
 
@@ -57,7 +57,7 @@ runs:
       name: deploy-new-sql-database
       scope: resourceGroup
       subscription-id: ${{ env.subscription-id }}
-      resource-group-name: rg-dev-tag
+      resource-group-name: ${{ env.environment-resource-group-name }}
       template-file: ./.github/workflows/bicep/create-database.bicep
       parameters: |
         environment_resource_group_name: ${{ env.environment-resource-group-name }}
@@ -73,9 +73,31 @@ runs:
       path: ./.github/workflows/initialize-user.sql
       arguments: '-v CaName=${{ env.container-app-name }}'
 
+  - name: deploy-container-app-revision
+    uses: azure/arm-deploy@v2
+    with:
+      resourceGroupName: ${{ env.resource-group-name }}
+      template: ./.github/workflows/bicep/create-container-app-revision.bicep
+      deploymentName: 'deploy-container-app-revision ${{ env.revision-suffix }}'
+      parameters: |
+        app_config_name: 'app-config=${{ env.environment }}-tag
+        app_insights_name: ${{ env.app-insights-name }}
+        container_app_name: ${{ env.container-app-name }}
+        container_app_image_name: ${{ env.service-name }}
+        container_app_image_tag: ${{ env.version-no }}
+        cpu: '0.5'
+        environment_resource_group_name: ${{ env.environment-resource-group-name }}
+        memory: '1Gi'
+        min_replicas: 1
+        max_replicas: 1
+        database_connection_string: 'Server=tcp:${{ env.sql-server-name }}.database.windows.net,1433;Authentication=Active Directory Managed Identity; Encrypt=True;Database=${{ env.sql-database-name }}'
+        container_app_environment_id: ${{ steps.container-app-required-variables.outputs.cae-id }}
+        ghcr_username: ${{ env.ghcr-username }}
+        ghcr_token: ${{ env.ghcr-token }}
+
   - name: get-dependency-configuration-details
     id: dependency-configuration
     shell: bash
     run: |
       appInsightsConnectionString="$(az monitor app-insights component show --query '[?name==`'${{ env.app-insights-name }}'`].connectionString | [0]')"
-      sqlDatabaseConnectionString="$(az monitor app-insights component show --query '[?name==`'${{ env.app-insights-name }}'`].connectionString | [0]')"
+      echo "app-insights-connection-string=$appInsightsConnectionString" >> $GITHUB_OUTPUT

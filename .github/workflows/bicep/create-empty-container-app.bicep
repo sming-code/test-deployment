@@ -30,6 +30,23 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
         }
       ]
       activeRevisionsMode: 'Single'
+      ingress: {
+        external: true
+        targetPort: 8080
+        exposedPort: 0
+        transport: 'Auto'
+        traffic: [
+          {
+            weight: 100
+            latestRevision: true
+          }
+        ]
+        allowInsecure: false
+        clientCertificateMode: 'Ignore'
+        stickySessions: {
+          affinity: 'none'
+        }
+      }
       registries: [
         {
           server: 'ghcr.io'

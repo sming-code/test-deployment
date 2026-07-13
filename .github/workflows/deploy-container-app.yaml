@@ -15,6 +15,14 @@ on:
         description: The version number of the container image
         required: true
         type: string
+      environments:
+        description: The environments to deploy to
+        required: true
+        type: string
+      service-types:
+        description: The service types to deploy
+        required: true
+        type: string
     secrets: 
       ghcr-username:
         required: true
@@ -49,10 +57,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        environment:
-          - dev
-          - test
-          - prod
+        environment: ${{ fromJson(inputs.environments) }}
+        service-type: ${{ fromJson(inputs.service-types) }}
       max-parallel: 1
     environment: ${{ matrix.environment }}
     steps:
@@ -89,6 +95,8 @@ jobs:
     - uses: ./.github/actions/deploy-container-app
       env:
         environment-name: ${{ matrix.environment }}
+        service-name: ${{ inputs.service-name }}
+        version-no: ${{ inputs.version-no }}
         subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknown'))) }}
         subscription-id: ${{ case(matrix.environment == 'dev', secrets.subscription-id-dev, case(matrix.environment == 'test', secrets.subscription-id-test, case(matrix.environment == 'prod', secrets.subscription-id-prod, 'unknown'))) }}
         environment-resource-group-name: ${{ steps.ca-variables.outputs.environment-resource-group-name }}
@@ -106,91 +114,3 @@ jobs:
         log-analytics-workspace-name: ${{ steps.ca-variables.outputs.log-analytics-workspace-name }}
         ghcr-username: ${{ secrets.ghcr-username }}
         ghcr-token: ${{ secrets.ghcr-token }}
-
-
-  # ca-variables:
-  #   name: Generate container app variables
-  #   needs: [ variables ]
-  #   uses: ./.github/workflows/get-ca-variables.yaml
-  #   with:
-  #     environment: ${{ needs.variables.outputs.environment }}
-  #     logical-area: ${{ needs.variables.outputs.logical-area }}
-  #     service-name: ${{ needs.variables.outputs.service-name }}
-  #     version-no: ${{ needs.variables.outputs.version-no }}
-  #   secrets:
-  #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_DEV }}
-  #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  # output-for-test:
-  #   name: Output for test
-  #   needs: [ ca-variables ]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - id: output-test
-  #       run: |
-  #         echo "${{ needs.ca-variables.outputs.resource-group-name }}"
-  #         echo "${{ needs.ca-variables.outputs.resource-group-exists }}"
-  #         echo "${{ needs.ca-variables.outputs.container-app-environment-name }}"
-  #         echo "${{ needs.ca-variables.outputs.container-app-name }}"
-  #         echo "${{ needs.ca-variables.outputs.container-app-exists }}"
-  #         echo "${{ needs.ca-variables.outputs.sql-server-name }}"
-  #         echo "${{ needs.ca-variables.outputs.sql-database-name }}"
-  #         echo "${{ needs.ca-variables.outputs.sql-database-exists }}"
-  #         echo "${{ needs.ca-variables.outputs.environment-resource-group-name }}"
-
-  # deploy-container-app:
-  #   env: 
-  #   environment: ${{ inputs.environment }}
-  #   name: Deploy container app to azure
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: azure/login@v3
-  #     with:
-  #       client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-    # - uses: ./.github/actions/deploy-container-app
-    #   with:
-    #     subscription: sub-tag-testing
-    #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    #     environment: dev
-    #     environment-resource-group-name: ${{ inputs.environment-resource-group-name }}
-    #     revision-suffix: ${{ inputs.revision-suffix }}
-    #     resource-group-name: ${{ inputs.resource-group-name }}
-    #     resource-group-exists: ${{ inputs.resource-group-exists }}
-    #     container-app-environment-name: ${{ inputs.container-app-environment-name }}
-    #     container-app-name: ${{ inputs.container-app-name }}
-    #     container-app-exists: ${{ inputs.container-app-exists }}
-    #     sql-server-name: ${{ inputs.sql-server-name }}
-    #     sql-database-name: ${{ inputs.sql-database-name }}
-    #     sql-database-exists: ${{ inputs.sql-database-exists }}
-    #     ghcr-username: ${{ secrets.GHCR_USERNAME }}
-    #     ghcr-token: ${{ secrets.GHCR_TOKEN }}
-
-  # deploy-dev:
-  #   name: Deploy container app and related resources to dev
-  #   needs: [ variables, ca-variables ]
-  #   if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
-  #   uses: ./.github/workflows/deploy-container-app.yaml
-  #   with:
-  #     subscription: sub-tag-testing
-  #     environment: dev
-  #     environment-resource-group-name: ${{ needs.ca-variables.outputs.environment-resource-group-name }}
-  #     revision-suffix: ${{ needs.variables.outputs.version-no }}
-  #     resource-group-name: ${{ needs.ca-variables.outputs.resource-group-name }}
-  #     resource-group-exists: ${{ needs.ca-variables.outputs.resource-group-exists }}
-  #     container-app-environment-name: ${{ needs.ca-variables.outputs.container-app-environment-name }}
-  #     container-app-name: ${{ needs.ca-variables.outputs.container-app-name }}
-  #     container-app-exists: ${{ needs.ca-variables.outputs.container-app-exists }}
-  #     sql-server-name: ${{ needs.ca-variables.outputs.sql-server-name }}
-  #     sql-database-name: ${{ needs.ca-variables.outputs.sql-database-name }}
-  #     sql-database-exists: ${{ needs.ca-variables.outputs.sql-database-exists }}
-  #   secrets:
-  #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_DEV }}
-  #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  #     GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-  #     GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
