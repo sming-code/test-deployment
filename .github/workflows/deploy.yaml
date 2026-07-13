@@ -18,7 +18,6 @@ env:
   logical-area: private
   app-name: traveller
   service-name: "Traveller Service"
-  service-types: '["Api"]'
 
 jobs:
   variables:
@@ -37,6 +36,7 @@ jobs:
       last-release-tag: ${{ steps.get-version.outputs.last-release-tag }}
       branch-deploy-environments: '["dev"]'
       environments: '["dev","test","prod"]'
+      service-types: '["Api"]'
 
   deployments:
     name: Deploy container app and related resources to environments
@@ -46,7 +46,7 @@ jobs:
     with:
       version-no: ${{ needs.variables.outputs.version-no }}
       environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.branch-deploy-environments) }}
-      service-types: $service-types
+      service-types: ${{ needs.variables.outputs.service-types }}
     secrets:
       ghcr-username: ${{ secrets.GHCR_USERNAME }}
       ghcr-token: ${{ secrets.GHCR_TOKEN }}
