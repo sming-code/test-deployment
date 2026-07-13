@@ -9,6 +9,7 @@ param environment_resource_group_name string
 param memory string
 param min_replicas int
 param max_replicas int
+var revisionNo = replace(container_app_image_tag, '.', '')
 
 @secure()
 param container_app_environment_id string
@@ -103,7 +104,7 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
           ]
         }
       ]
-      revisionSuffix: 'v${container_app_image_tag}'
+      revisionSuffix: 'v${revisionNo}'
       scale: {
         minReplicas: min_replicas
         maxReplicas: max_replicas
