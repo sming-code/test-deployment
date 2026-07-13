@@ -79,6 +79,8 @@ jobs:
       uses: ./.github/actions/get-ca-variables
       with:
         environment: ${{ matrix.environment }}
+        app-name: ${{ inputs.app-name }}
+        logical-area: ${{ inputs.logical-area }}
 
     - id: output-test
       run: |
