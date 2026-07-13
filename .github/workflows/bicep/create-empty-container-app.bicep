@@ -1,11 +1,11 @@
-param environment string
-param container_app_name string
-param environmentKeyVaultName string = 'kv-${environment}-tag'
-param environmentAppConfigurationName string = 'app-config-${environment}-tag'
-param environment_resource_group_name string
-param log_analytics_workspace_name string
+param app_config_name string
 param app_insights_name string
-param app_insights_exists int
+param container_app_name string
+param environment string
+param environment_resource_group_name string
+
+var environmentKeyVaultName string = 'kv-${environment}-tag'
+var environmentAppConfigurationName string = 'app-config-${environment}-tag'
 
 @secure()
 param container_app_environment_id string
@@ -13,6 +13,15 @@ param container_app_environment_id string
 param ghcr_username string
 @secure()
 param ghcr_token string
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: app_insights_name
+}
+
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = {
+  name: app_config_name
+  scope: resourceGroup(environment_resource_group_name)
+}
 
 resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
   name: container_app_name
@@ -27,6 +36,14 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
         {
           name: 'ghcr-token'
           value: ghcr_token
+        }
+        {
+          name: 'app-insights-endpoint'
+          value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'app-config-endpoint'
+          value: appConfig.properties.endpoint
         }
       ]
       activeRevisionsMode: 'Single'
@@ -93,12 +110,4 @@ module appConfigurationPolicyAssignment 'app-configuration-user-role-assignment.
     principalId: container_app.identity.principalId
   }
   scope: resourceGroup(environment_resource_group_name)
-}
-
-module app_insights 'create-app-insights.bicep' = if (app_insights_exists == 0) {
-  params: {
-    appInsightsName: app_insights_name
-    logAnalyticsWorkspaceName: log_analytics_workspace_name
-    logAnalyticsResourceGroupName: environment_resource_group_name
-  }
 }
