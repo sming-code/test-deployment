@@ -15,9 +15,6 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  logical-area: private
-  app-name: traveller
-  service-name: "Traveller Service"
 
 jobs:
   variables:
@@ -34,6 +31,9 @@ jobs:
     outputs:
       version-no: ${{ steps.get-version.outputs.version-no }}
       last-release-tag: ${{ steps.get-version.outputs.last-release-tag }}
+      logical-area: private
+      app-name: traveller
+      service-name: "Traveller Service"
       branch-deploy-environments: '["dev"]'
       environments: '["dev","test","prod"]'
       service-types: '["Api"]'
@@ -44,6 +44,9 @@ jobs:
     if: ${{ (github.ref == 'refs/heads/main') || (inputs.deploy-to-dev == true) }}
     uses: ./.github/workflows/deploy-container-app.yaml
     with:
+      logical-area: ${{ needs.variables.outputs.logical-area }}
+      app-name: ${{ needs.variables.outputs.app-name }}
+      service-name: ${{ needs.variables.outputs.service-name }}
       version-no: ${{ needs.variables.outputs.version-no }}
       environments: ${{ case(github.ref == 'refs/heads/main', needs.variables.outputs.environments, needs.variables.outputs.branch-deploy-environments) }}
       service-types: ${{ needs.variables.outputs.service-types }}

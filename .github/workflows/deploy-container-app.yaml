@@ -3,6 +3,18 @@ name: Deploy container app to environments
 on:
   workflow_call:
     inputs:
+      logical-area:
+        description: The logical area to deploy to
+        required: true
+        type: string
+      app-name:
+        description: The name of the app
+        required: true
+        type: string
+      service-name:
+        description: The service name to use for logging
+        required: true
+        type: string
       version-no:
         description: The version number of the container image
         required: true
@@ -84,6 +96,9 @@ jobs:
 
     - uses: ./.github/actions/deploy-container-app
       env:
+        logical-area: ${{ inputs.logical-area }}
+        app-name: ${{ inputs.app-name }}
+        service-name: ${{ inputs.service-name }}
         environment-name: ${{ matrix.environment }}
         version-no: ${{ inputs.version-no }}
         subscription: ${{ case(matrix.environment == 'dev', 'sub-tag-testing', case(matrix.environment == 'test', 'sub-tag-testing', case(matrix.environment == 'prod', 'sub-tag-testing', 'unknown'))) }}
