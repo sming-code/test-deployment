@@ -79,6 +79,7 @@ runs:
       resourceGroupName: ${{ env.resource-group-name }}
       template: ./.github/workflows/bicep/create-container-app-revision.bicep
       deploymentName: 'deploy-container-app-revision ${{ env.revision-suffix }}'
+      scope: resourcegroup
       parameters: |
         app_config_name: 'app-config=${{ env.environment }}-tag
         app_insights_name: ${{ env.app-insights-name }}

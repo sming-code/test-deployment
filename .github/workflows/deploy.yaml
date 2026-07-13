@@ -30,7 +30,7 @@ jobs:
       run: echo "Variables loaded..."
     outputs:
       logical-area: private
-      service-name: traveller-svc
+      service-name: demo-customer-svc-api
       branch-deploy-environments: '["dev"]'
       environments: '["dev","test","prod"]'
       service-types: '["Api"]'
