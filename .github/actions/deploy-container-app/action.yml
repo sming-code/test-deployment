@@ -72,3 +72,10 @@ runs:
       connection-string: "Server=tcp:${{ env.sql-server-name }}.database.windows.net,1433;Initial Catalog=${{ env.sql-database-name }};Authentication=Active Directory Default;Encrypt=True;"
       path: ./.github/workflows/initialize-user.sql
       arguments: '-v CaName=${{ env.container-app-name }}'
+
+  - name: get-dependency-configuration-details
+    id: dependency-configuration
+    shell: bash
+    run: |
+      appInsightsConnectionString="$(az monitor app-insights component show --query '[?name==`'${{ env.app-insights-name }}'`].connectionString | [0]')"
+      sqlDatabaseConnectionString="$(az monitor app-insights component show --query '[?name==`'${{ env.app-insights-name }}'`].connectionString | [0]')"

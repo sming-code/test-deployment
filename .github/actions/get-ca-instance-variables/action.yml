@@ -1,0 +1,80 @@
+name: Get container app instance variables
+description: 'Get the variables needed to deploy the container app'
+inputs:
+  environment:
+    description: The environment being deployed to
+    required: true
+    type: string
+  logical-area:
+    description: The logical area of our ecosystem - i.e. public, private
+    required: true
+    type: string
+  service-name:
+    description: The name of the service
+    required: true
+    type: string
+outputs:
+  resource-group-name:
+    value: ${{ steps.build-ca-variables.outputs.resource-group-name }}
+  resource-group-exists:
+    value: ${{ steps.build-ca-variables.outputs.resource-group-exists }}
+  container-app-environment-name:
+    value: ${{ steps.build-ca-variables.outputs.container-app-environment-name }}
+  container-app-name:
+    value: ${{ steps.build-ca-variables.outputs.container-app-name }}
+  container-app-exists:
+    value: ${{ steps.build-ca-variables.outputs.container-app-exists }}
+  sql-server-name:
+    value: ${{ inputs.environment }}-tag
+  sql-database-name:
+    value: ${{ steps.build-ca-variables.outputs.sql-database-name }}
+  sql-database-exists:
+    value: ${{ steps.build-ca-variables.outputs.sql-database-exists }}
+  environment-resource-group-name:
+    value: rg-${{ inputs.environment }}-tag
+  log-analytics-workspace-name:
+    value: log-analytics-${{ inputs.environment }}-tag
+  app-insights-name:
+    value: ${{ steps.build-ca-variables.outputs.app-insights-name }}
+  app-insights-exists:
+    value: ${{ steps.build-ca-variables.outputs.app-insights-exists }}
+
+runs:
+  using: "composite"
+  steps:
+  - id: build-ca-variables
+    shell: bash
+    run: |
+      serviceEnvironment="${{ inputs.service-name }}-${{ inputs.environment }}"
+      branchName="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+      branchSuffix="$([[ $branchName =~ ^(feature|bugfix)\/([A-Z]{3}-[0-9]{3})-.+$ ]] && echo -${BASH_REMATCH[2],,} || echo '')"
+      containerAppEnvironmentName="caenv-${{ inputs.environment }}-tag-${{ inputs.logical-area }}"
+      containerAppName="ca-${{ inputs.service-name }}-${{ inputs.environment }}$branchSuffix"
+      appInsightsName="insight-$containerAppName"
+      resourceGroupName="rg-${{ inputs.environment }}$branchSuffix"
+      sqlDatabaseName="sql-$containerAppName"
+      environmentResourceGroupResponse="$(az group list --query '[?name==`'rg-${{ inputs.environment }}-tag'`].name')"
+      resourceGroupResponse="$(az group list --query '[?name==`'$resourceGroupName'`].name')"
+      resourceGroupExists="$([[ $resourceGroupResponse == '[]' ]] && echo 0 || echo 1)"
+      sqlDatabaseId="$(az sql db list -s dev-tag -g rg-dev-tag --query '[?name==`'$sqlDatabaseName'`].id | [0]')"
+      sqlDatabaseExists="$([[ $sqlDatabaseId == '' ]] && echo 0 || echo 1)"
+      if [[ $resourceGroupExists == 0 ]]; then
+        containerAppId=""
+        containerAppExists=0
+        appInsightsId=""
+        appInsightsExists=0
+      else
+        containerAppId="$(az containerapp list -g $resourceGroupName --query '[?name==`'$containerAppName'`].id | [0]')"
+        containerAppExists="$([[ $containerAppId == '' ]] && echo 0 || echo 1)"
+        appInsightsId="$(az monitor app-insights component show -g $resourceGroupName --query '[?name==`'$appInsightsName'`].id | [0]')"
+        appInsightsExists="$([[ $appInsightsId == '' ]] && echo 0 || echo 1)"
+      fi
+      echo "resource-group-name=$resourceGroupName" >> $GITHUB_OUTPUT
+      echo "resource-group-exists=$resourceGroupExists" >> $GITHUB_OUTPUT
+      echo "container-app-environment-name=$containerAppEnvironmentName" >> $GITHUB_OUTPUT
+      echo "container-app-name=$containerAppName" >> $GITHUB_OUTPUT
+      echo "container-app-exists=$containerAppExists" >> $GITHUB_OUTPUT
+      echo "app-insights-name=$appInsightsName" >> $GITHUB_OUTPUT
+      echo "app-insights-exists=$appInsightsExists" >> $GITHUB_OUTPUT
+      echo "sql-database-name=$sqlDatabaseName" >> $GITHUB_OUTPUT
+      echo "sql-database-exists=$sqlDatabaseExists" >> $GITHUB_OUTPUT

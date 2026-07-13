@@ -1,6 +1,7 @@
 param environment string
 param container_app_name string
 param environmentKeyVaultName string = 'kv-${environment}-tag'
+param environmentAppConfigurationName string = 'app-config-${environment}-tag'
 param environment_resource_group_name string
 param log_analytics_workspace_name string
 param app_insights_name string
@@ -64,6 +65,14 @@ resource container_app 'Microsoft.App/containerapps@2026-01-01' = {
 module keyvaultAppPolicyAssignment 'keyvault-secrets-user-role-assignment.bicep' = {
   params: {
     keyvaultName: environmentKeyVaultName
+    principalId: container_app.identity.principalId
+  }
+  scope: resourceGroup(environment_resource_group_name)
+}
+
+module appConfigurationPolicyAssignment 'app-configuration-user-role-assignment.bicep' = {
+  params: {
+    appConfigStoreName: environmentAppConfigurationName
     principalId: container_app.identity.principalId
   }
   scope: resourceGroup(environment_resource_group_name)
