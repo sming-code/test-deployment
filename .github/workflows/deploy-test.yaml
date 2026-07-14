@@ -17,5 +17,6 @@ jobs:
     steps:
     - id: get-lower-case
       run: |
-        testLower="${${{ inputs.mixed-case-string }},,}"
+        testLowerInput=${{ inputs.mixed-case-string }}
+        testLower="${testLowerInput,,}"
         echo "$testLower"
