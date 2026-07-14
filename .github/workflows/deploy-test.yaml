@@ -2,6 +2,10 @@ name: Test deployment playground pipeline.
 
 on:
   workflow_dispatch:
+    inputs:
+      mixed-case-string:
+        type: string
+        required: true
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -11,29 +15,11 @@ permissions:
   contents: read
 
 jobs:
-  deploy-container-app:
-    environment: dev
+  test-stuff:
     name: Test stuff
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - uses: azure/login@v3
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-    - id: get-connection-string
+    - id: get-lower-case
       run: |
-        anonymisedIntegratedAuthConnectionString="$(az sql db show-connection-string --subscription sub-tag-testing -s dev-tag -n sql-ca-traveller-svc-dev-prd-336 -c ado.net)"
-        echo "$anonymisedIntegratedAuthConnectionString"
-        integratedAuthConnectionString=${anonymisedIntegratedAuthConnectionString/<username>/sming-entra}
-        echo "$integratedAuthConnectionString"
-
-        echo "connection-string=$integratedAuthConnectionString" >> $GITHUB_OUTPUT
-
-    - uses: azure/sql-action@v2.3
-      with:
-        connection-string: "Server=tcp:dev-tag.database.windows.net,1433;Initial Catalog=sql-ca-traveller-svc-dev-prd-336;Authentication=Active Directory Default;Encrypt=True;"
-        path: ./.github/workflows/initialize-user.sql
-        arguments: '-v CaName=ca-traveller-svc-dev-prd-336'
+        testLower="${${{ inputs.mixed-case-string }},,}"
+        echo "$testLower"
