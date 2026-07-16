@@ -21,6 +21,7 @@ jobs:
     - id: get-branch-detail
       outputs:
         branch-name: ${{ case(github.head_ref == '', github.ref_name, github.head_ref) }}
+      run: echo "Done"
 
     - run: |
         echo "${{ steps.jobs.get-branch-detail.outputs.branch-name }}"
