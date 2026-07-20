@@ -1,0 +1,10 @@
+name: Test tier 1
+description: 'Test env behaviour in tiers'
+
+runs:
+  using: "composite"
+  steps:
+  - name: Test tier 2
+    uses: ./.github/actions/test-tier2
+    env:
+      test-value5: test-value3

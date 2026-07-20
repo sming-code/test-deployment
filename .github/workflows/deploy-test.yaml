@@ -22,3 +22,8 @@ jobs:
         echo "${{ case(github.head_ref == '', github.ref_name, github.head_ref) }}"
         echo "${{ github.head_ref }}"
         echo "${{ github.ref_name }}"
+
+    - uses: ./.github/actions/test-tier1
+      env:
+        test-value: value
+        test-value2: value2

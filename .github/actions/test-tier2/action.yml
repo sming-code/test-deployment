@@ -1,0 +1,13 @@
+name: Test tier 1
+description: 'Test env behaviour in tiers'
+
+runs:
+  using: "composite"
+  steps:
+  - name: Test tier 3
+    shell: bash
+    run: |
+      echo "${{ env.test-value }}"
+      echo "${{ env.test-value2 }}"
+      echo "${{ env.test-value5 }}"
+      
